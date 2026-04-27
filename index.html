@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SPIDER-MAN: THE COMPLETE INSOMNIAC SAGA</title>
+    <title>SPIDER-MAN | THE INSOMNIAC OMNIBUS</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Syncopate:wght@700&family=Inter:wght@400;900&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Syncopate:wght@700&family=Inter:wght@300;400;700;900&display=swap');
 
         :root {
-            --red: #E21B22; --blue: #004694; --gold: #FFD700; --black: #050508;
-            --white: #ffffff; --glass: rgba(255, 255, 255, 0.05);
+            --red: #E21B22; --blue: #004694; --black: #050508;
+            --white: #ffffff; --gray: #1a1a1a; --text-dim: #a0a0a0;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -19,270 +19,230 @@
             cursor: none; scroll-behavior: smooth;
         }
 
+        /* --- INITIALIZATION OVERLAY --- */
+        #boot-screen {
+            position: fixed; inset: 0; background: var(--black); z-index: 20000;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            transition: opacity 1s ease;
+        }
+        .boot-btn {
+            padding: 20px 40px; background: transparent; border: 1px solid var(--red);
+            color: var(--white); font-family: 'Syncopate'; cursor: pointer;
+            letter-spacing: 5px; transition: 0.3s;
+        }
+        .boot-btn:hover { background: var(--red); box-shadow: 0 0 30px var(--red); }
+
         /* --- UI OVERLAYS --- */
         #cursor {
-            position: fixed; width: 10px; height: 10px; background: var(--white);
+            position: fixed; width: 8px; height: 8px; background: var(--white);
             border-radius: 50%; pointer-events: none; z-index: 10000;
-            box-shadow: 0 0 15px var(--white); transition: transform 0.1s ease;
+            box-shadow: 0 0 15px var(--white); mix-blend-mode: difference;
         }
         #web-canvas { position: fixed; top: 0; left: 0; z-index: 9999; pointer-events: none; }
-        
+
+        /* --- MUSIC CONTROLLER HUD --- */
+        .music-hud {
+            position: fixed; top: 30px; right: 30px; z-index: 10001;
+            display: flex; align-items: center; gap: 15px;
+            background: rgba(0,0,0,0.6); padding: 10px 20px;
+            border: 1px solid var(--glass); border-radius: 50px;
+            backdrop-filter: blur(10px);
+        }
+        .music-ctrl {
+            background: none; border: none; color: var(--white);
+            font-family: 'Syncopate'; font-size: 0.7rem; cursor: pointer;
+            letter-spacing: 2px;
+        }
+        .music-ctrl:hover { color: var(--red); }
+        .track-info { font-size: 0.6rem; color: var(--text-dim); text-transform: uppercase; width: 150px; overflow: hidden; white-space: nowrap; }
+
+        /* --- HUD NAVIGATION --- */
         .hud-nav {
-            position: fixed; right: 40px; top: 50%; transform: translateY(-50%);
-            z-index: 1000; display: flex; flex-direction: column; gap: 20px;
+            position: fixed; left: 30px; top: 50%; transform: translateY(-50%);
+            z-index: 1000; display: flex; flex-direction: column; gap: 15px;
         }
-        .nav-item {
-            width: 12px; height: 12px; border: 1px solid var(--white);
-            border-radius: 2px; transition: 0.3s; cursor: pointer;
+        .nav-dot {
+            width: 10px; height: 10px; border: 1px solid var(--text-dim);
+            transition: 0.3s; cursor: pointer;
         }
-        .nav-item:hover { background: var(--red); transform: scale(1.5) rotate(45deg); box-shadow: 0 0 10px var(--red); }
+        .nav-dot:hover { background: var(--red); transform: scale(1.3) rotate(45deg); border-color: var(--red); }
 
-        /* --- SECTIONS CORE --- */
-        section {
-            min-height: 100vh; width: 100vw; padding: 100px 10%;
-            display: flex; flex-direction: column; justify-content: center;
-            position: relative; border-bottom: 1px solid rgba(255,255,255,0.05);
-        }
+        /* --- CONTENT STYLES --- */
+        section { min-height: 100vh; width: 100vw; padding: 100px 12%; position: relative; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .section-tag { font-family: 'Syncopate', sans-serif; font-size: 0.7rem; color: var(--red); letter-spacing: 5px; margin-bottom: 10px; display: block; text-transform: uppercase; }
+        h2 { font-family: 'Syncopate', sans-serif; font-size: 3rem; margin-bottom: 30px; letter-spacing: -2px; }
+        p { line-height: 1.8; color: var(--text-dim); font-size: 1.05rem; margin-bottom: 20px; }
 
-        h2.section-label {
-            font-family: 'Syncopate', sans-serif; font-size: 5rem;
-            color: transparent; -webkit-text-stroke: 1px rgba(255,255,255,0.2);
-            position: absolute; top: 50px; left: 5%; z-index: -1;
-        }
+        /* --- HERO --- */
+        #hero { text-align: center; }
+        .hero-title { font-size: 10vw; font-weight: 900; line-height: 0.8; margin-bottom: 20px; }
 
-        /* --- 1. HERO --- */
-        #hero { text-align: center; overflow: hidden; }
-        .glitch-title {
-            font-size: 12vw; font-weight: 900; line-height: 0.8;
-            text-transform: uppercase; background: linear-gradient(var(--white), #888);
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            filter: drop-shadow(10px 0 var(--red)) drop-shadow(-10px 0 var(--blue));
-        }
+        /* --- DATA TABLES --- */
+        .cast-table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 0.9rem; text-align: left; }
+        .cast-table th { color: var(--red); padding: 15px; border-bottom: 2px solid var(--gray); text-transform: uppercase; }
+        .cast-table td { padding: 15px; border-bottom: 1px solid var(--gray); }
 
-        /* --- 2. GAMES & DLC (3D GRID) --- */
-        .grid-3d {
-            display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 30px; perspective: 1000px;
-        }
-        .card-3d {
-            height: 400px; background: var(--glass); border: 1px solid rgba(255,255,255,0.1);
-            position: relative; transform-style: preserve-3d; transition: 0.5s;
-            overflow: hidden;
-        }
-        .card-3d:hover { transform: translateZ(50px) rotateY(10deg); border-color: var(--red); }
-        .card-3d img { width: 100%; height: 100%; object-fit: cover; opacity: 0.5; transition: 0.5s; }
-        .card-3d:hover img { opacity: 1; transform: scale(1.1); }
-        .card-info { position: absolute; bottom: 20px; left: 20px; z-index: 2; }
-
-        /* --- 3. TIMELINE (VORTEX) --- */
-        .timeline-vortex { position: relative; max-width: 800px; margin: 0 auto; }
-        .tl-entry {
-            padding: 40px; margin: 20px 0; background: rgba(255,255,255,0.02);
-            border-left: 4px solid var(--blue); transition: 0.3s;
-        }
-        .tl-entry:hover { background: rgba(0, 70, 148, 0.1); transform: translateX(20px); border-color: var(--red); }
-
-        /* --- 4. CHARACTERS --- */
-        .char-flex { display: flex; overflow-x: auto; gap: 40px; padding-bottom: 50px; scroll-snap-type: x mandatory; }
-        .char-box {
-            min-width: 400px; height: 500px; scroll-snap-align: center;
-            background: #111; position: relative; overflow: hidden;
-        }
-        .char-box img { width: 100%; height: 100%; object-fit: cover; filter: saturate(0); transition: 0.8s; }
-        .char-box:hover img { filter: saturate(1); transform: scale(1.05); }
-        .char-overlay {
-            position: absolute; bottom: 0; width: 100%; padding: 40px;
-            background: linear-gradient(transparent, var(--black));
-        }
-
-        /* --- 5. WHY PLAY --- */
-        .why-container { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
-        .reason { padding: 40px; border: 1px solid var(--glass); text-align: center; }
-        .reason i { font-size: 3rem; display: block; margin-bottom: 20px; color: var(--red); }
-
-        /* --- 6. GALLERY --- */
-        .gallery-vortex {
-            display: grid; grid-template-columns: repeat(4, 1fr); grid-auto-rows: 200px; gap: 10px;
-        }
-        .gal-img { width: 100%; height: 100%; object-fit: cover; filter: brightness(0.5); transition: 0.3s; }
-        .gal-img:hover { filter: brightness(1); outline: 2px solid var(--white); }
-
-        /* --- UTILS --- */
-        .label { color: var(--red); font-weight: 900; letter-spacing: 3px; font-size: 0.8rem; margin-bottom: 10px; display: block;}
-        h3 { font-family: 'Syncopate', sans-serif; margin-bottom: 15px; }
-        p { color: #aaa; line-height: 1.6; }
+        /* --- STORY BLOCKS --- */
+        .story-container { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: start; }
+        .story-image { width: 100%; height: 400px; object-fit: cover; border: 1px solid var(--gray); filter: grayscale(1); transition: 0.5s; }
+        .story-image:hover { filter: grayscale(0); }
+        .dlc-box { margin-top: 20px; padding: 20px; background: rgba(226, 27, 34, 0.05); border-left: 2px solid var(--red); }
 
     </style>
 </head>
 <body>
 
+    <div id="boot-screen">
+        <button class="boot-btn" onclick="initExperience()">INITIALIZE SAGA</button>
+    </div>
+
     <div id="cursor"></div>
     <canvas id="web-canvas"></canvas>
 
+    <div id="player" style="display:none"></div>
+
+    <div class="music-hud">
+        <div class="track-info" id="current-track">SYSTEM SILENT</div>
+        <button class="music-ctrl" id="music-toggle" onclick="toggleMusic()">PLAY</button>
+        <button class="music-ctrl" onclick="nextTrack()">NEXT</button>
+    </div>
+
     <nav class="hud-nav">
-        <div class="nav-item" onclick="document.getElementById('hero').scrollIntoView()"></div>
-        <div class="nav-item" onclick="document.getElementById('games').scrollIntoView()"></div>
-        <div class="nav-item" onclick="document.getElementById('timeline').scrollIntoView()"></div>
-        <div class="nav-item" onclick="document.getElementById('characters').scrollIntoView()"></div>
-        <div class="nav-item" onclick="document.getElementById('whyplay').scrollIntoView()"></div>
-        <div class="nav-item" onclick="document.getElementById('gallery').scrollIntoView()"></div>
+        <div class="nav-dot" title="Home" onclick="scrollToId('hero')"></div>
+        <div class="nav-dot" title="Saga" onclick="scrollToId('saga')"></div>
+        <div class="nav-dot" title="History" onclick="scrollToId('sm1')"></div>
+        <div class="nav-dot" title="Cast" onclick="scrollToId('cast')"></div>
     </nav>
 
     <section id="hero">
-        <span class="label">INSOMNIAC GAMES</span>
-        <h1 class="glitch-title">SPIDER<br>MAN</h1>
-        <p style="margin-top: 20px; letter-spacing: 5px;">BE GREATER. TOGETHER.</p>
+        <span class="section-tag">Neural Link Established</span>
+        <h1 class="hero-title">SPIDER<br>SAGA</h1>
+        <p style="letter-spacing: 15px; color: var(--blue);">BE GREATER. TOGETHER.</p>
     </section>
 
-    <section id="games">
-        <h2 class="section-label">PROJECTS</h2>
-        <div class="grid-3d">
-            <div class="card-3d">
-                <img src="https://media.rawg.io/media/games/cd3/cd3c9c7d3e95cb1608fd6289f0302b62.jpg">
-                <div class="card-info"><span class="label">2018</span><h3>Spider-Man</h3></div>
+    <section id="saga">
+        <span class="section-tag">Overview</span>
+        <h2>The Modern Era</h2>
+        <p>The "Spider-Man game saga" refers to the critically acclaimed Insomniac Games Universe (Earth-1048). While there are dozens of older games dating back to 1982, the current "Saga" is defined by its interconnected, cinematic narrative.</p>
+    </section>
+
+    <section id="sm1">
+        <span class="section-tag">History</span>
+        <div class="story-container">
+            <div>
+                <h2>Marvel's Spider-Man</h2>
+                <p>A 23-year-old Peter Parker, who has been Spider-Man for eight years, helps the police arrest Wilson Fisk. This creates a power vacuum filled by the "Inner Demons," led by Mister Negative.</p>
+                <p>Peter’s mentor, Dr. Otto Octavius, forms the Sinister Six. After the release of Devil's Breath, Peter makes the heartbreaking choice to save the city over his dying Aunt May.</p>
+                <div class="dlc-box">
+                    <p><strong>DLC: The City That Never Sleeps</strong><br>Features The Heist (Black Cat), Turf Wars (Hammerhead), and Silver Lining (Silver Sable).</p>
+                </div>
             </div>
-            <div class="card-3d">
-                <img src="https://image.api.playstation.com/vulcan/img/rnd/202010/2621/7Cms9nN5W8YVq5V0Vb4o5U8D.png">
-                <div class="card-info"><span class="label">DLC</span><h3>The Heist</h3></div>
-            </div>
-            <div class="card-3d">
-                <img src="https://media.rawg.io/media/games/03b/03b290740942e61f22144d9f6fd1bd0b.jpg">
-                <div class="card-info"><span class="label">2020</span><h3>Miles Morales</h3></div>
-            </div>
-            <div class="card-3d">
-                <img src="https://gmedia.playstation.com/is/image/SIEPDC/marvels-spider-man-2-logo-01-en-14sep21?$native$">
-                <div class="card-info"><span class="label">2023</span><h3>Spider-Man 2</h3></div>
-            </div>
-            <div class="card-3d">
-                <img src="https://image.api.playstation.com/vulcan/img/rnd/202010/2621/bVvRjLdYlG1Y2jC4f6wX7X5D.png">
-                <div class="card-info"><span class="label">DLC</span><h3>Turf Wars</h3></div>
-            </div>
-            <div class="card-3d">
-                <img src="https://image.api.playstation.com/vulcan/img/rnd/202010/2621/4a8Xf1L5v5gHjLdYlG1Y2jC4.png">
-                <div class="card-info"><span class="label">DLC</span><h3>Silver Lining</h3></div>
-            </div>
+            <img src="https://media.rawg.io/media/games/cd3/cd3c9c7d3e95cb1608fd6289f0302b62.jpg" class="story-image">
         </div>
     </section>
 
-    <section id="timeline">
-        <h2 class="section-label">HISTORY</h2>
-        <div class="timeline-vortex">
-            <div class="tl-entry">
-                <h3>01. The Devil's Breath</h3>
-                <p>Peter faces the fall of Otto Octavius and the rise of the Sinister Six in a desperate race to save New York from a bio-weapon.</p>
-            </div>
-            <div class="tl-entry">
-                <h3>02. The New Protector</h3>
-                <p>Miles Morales defends Harlem from the Roxxon Corporation and the Underground while Peter is away in Symkaria.</p>
-            </div>
-            <div class="tl-entry">
-                <h3>03. The Greater Threat</h3>
-                <p>Kraven the Hunter arrives in NYC, triggering the emergence of the Symbiote and the ultimate test for both Spiders.</p>
-            </div>
-        </div>
+    <section id="cast">
+        <span class="section-tag">Voice Talent</span>
+        <h2>Character Database</h2>
+        <table class="cast-table">
+            <thead>
+                <tr><th>Character</th><th>Voice Actor</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>Peter Parker</td><td>Yuri Lowenthal</td></tr>
+                <tr><td>Miles Morales</td><td>Nadji Jeter</td></tr>
+                <tr><td>MJ Watson</td><td>Laura Bailey</td></tr>
+                <tr><td>Doctor Octopus</td><td>William Salyers</td></tr>
+                <tr><td>Venom</td><td>Tony Todd</td></tr>
+                <tr><td>Kraven</td><td>Jim Pirri</td></tr>
+                <tr><td>Black Cat</td><td>Erica Lindbeck</td></tr>
+                <tr><td>Wraith</td><td>Tara Platt</td></tr>
+            </tbody>
+        </table>
     </section>
 
-    <section id="characters">
-        <h2 class="section-label">LEGENDS</h2>
-        <div class="char-flex">
-            <div class="char-box">
-                <img src="https://gmedia.playstation.com/is/image/SIEPDC/marvels-spider-man-screen-02-ps4-us-12jun18?$native$">
-                <div class="char-overlay"><h3>Peter Parker</h3><p>The veteran hero struggling to balance a normal life with Harry Osborn's return.</p></div>
-            </div>
-            <div class="char-box">
-                <img src="https://gmedia.playstation.com/is/image/SIEPDC/marvels-spider-man-miles-morales-screenshot-01-discl-en-02oct20?$native$">
-                <div class="char-overlay"><h3>Miles Morales</h3><p>Evolved with bio-electric powers, Miles is now a beacon of hope for Harlem.</p></div>
-            </div>
-            <div class="char-box">
-                <img src="https://gmedia.playstation.com/is/image/SIEPDC/marvels-spider-man-2-screenshot-13-en-01jun23?$native$">
-                <div class="char-overlay"><h3>Venom</h3><p>The ultimate nightmare. A symbiote bond that threatens to consume the city.</p></div>
-            </div>
-        </div>
-    </section>
-
-    <section id="whyplay">
-        <h2 class="section-label">CORE</h2>
-        <div class="why-container">
-            <div class="reason"><h3>Traversal</h3><p>Physics-based swinging that defines the superhero genre.</p></div>
-            <div class="reason"><h3>Narrative</h3><p>High-stakes emotional storytelling where the mask always has a cost.</p></div>
-            <div class="reason"><h3>Visuals</h3><p>A stunning, living recreation of Marvel's Manhattan.</p></div>
-        </div>
-    </section>
-
-    <section id="gallery">
-        <h2 class="section-label">VISUALS</h2>
-        <div class="gallery-vortex">
-            <img src="https://gmedia.playstation.com/is/image/SIEPDC/marvels-spider-man-2-screenshot-02-en-01jun23?$native$" class="gal-img">
-            <img src="https://gmedia.playstation.com/is/image/SIEPDC/marvels-spider-man-miles-morales-screenshot-02-discl-en-02oct20?$native$" class="gal-img">
-            <img src="https://gmedia.playstation.com/is/image/SIEPDC/marvels-spider-man-screen-08-ps4-us-12jun18?$native$" class="gal-img">
-            <img src="https://gmedia.playstation.com/is/image/SIEPDC/marvels-spider-man-2-screenshot-10-en-01jun23?$native$" class="gal-img">
-        </div>
-    </section>
-
+    <script src="https://www.youtube.com/iframe_api"></script>
     <script>
+        // --- MUSIC ENGINE ---
+        let player;
+        let currentTrackIndex = 0;
+        const playlist = [
+            { id: '-kt1yB3Lk9g', title: 'Spider-Man 2 Theme' },
+            { id: 'ApXoWvfEYVU', title: 'Sunflower' },
+            { id: '5IaHyW-z27U', title: 'Home' },
+            { id: 'AhiA2tXQ7pk', title: 'I\'m Ready' }
+        ];
+
+        function onYouTubeIframeAPIReady() {
+            player = new YT.Player('player', {
+                height: '0', width: '0',
+                videoId: playlist[0].id,
+                playerVars: { 'autoplay': 0, 'controls': 0 },
+                events: { 'onStateChange': onPlayerStateChange }
+            });
+        }
+
+        function onPlayerStateChange(event) {
+            if (event.data == YT.PlayerState.ENDED) { nextTrack(); }
+        }
+
+        function initExperience() {
+            document.getElementById('boot-screen').style.opacity = '0';
+            setTimeout(() => { document.getElementById('boot-screen').style.display = 'none'; }, 1000);
+            player.playVideo();
+            updateMusicUI();
+        }
+
+        function toggleMusic() {
+            const state = player.getPlayerState();
+            if (state == 1) { 
+                player.pauseVideo();
+                document.getElementById('music-toggle').innerText = 'PLAY';
+            } else {
+                player.playVideo();
+                document.getElementById('music-toggle').innerText = 'PAUSE';
+            }
+        }
+
+        function nextTrack() {
+            currentTrackIndex = (currentTrackIndex + 1) % playlist.length;
+            player.loadVideoById(playlist[currentTrackIndex].id);
+            updateMusicUI();
+        }
+
+        function updateMusicUI() {
+            document.getElementById('current-track').innerText = playlist[currentTrackIndex].title;
+            document.getElementById('music-toggle').innerText = 'PAUSE';
+        }
+
+        // --- VISUAL ENGINE ---
         const cursor = document.getElementById('cursor');
         const canvas = document.getElementById('web-canvas');
         const ctx = canvas.getContext('2d');
-        let mouse = { x: 0, y: 0 };
-        let lastMouse = { x: 0, y: 0 };
+        let mouse = { x: 0, y: 0 }, lastMouse = { x: 0, y: 0 };
 
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
+        canvas.width = window.innerWidth; canvas.height = window.innerHeight;
 
         window.addEventListener('mousemove', (e) => {
-            mouse.x = e.clientX;
-            mouse.y = e.clientY;
-            cursor.style.left = mouse.x + 'px';
-            cursor.style.top = mouse.y + 'px';
+            mouse.x = e.clientX; mouse.y = e.clientY;
+            cursor.style.left = mouse.x + 'px'; cursor.style.top = mouse.y + 'px';
         });
 
-        // Web Trail Effect
         function animate() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             ctx.beginPath();
             ctx.moveTo(lastMouse.x, lastMouse.y);
             ctx.lineTo(mouse.x, mouse.y);
-            ctx.strokeStyle = 'rgba(255,255,255,0.1)';
-            ctx.lineWidth = 2;
+            ctx.strokeStyle = 'rgba(255,255,255,0.15)';
+            ctx.lineWidth = 1;
             ctx.stroke();
-
-            // Pull the tail toward the current mouse position
-            lastMouse.x += (mouse.x - lastMouse.x) * 0.08;
-            lastMouse.y += (mouse.y - lastMouse.y) * 0.08;
-
+            lastMouse.x += (mouse.x - lastMouse.x) * 0.1;
+            lastMouse.y += (mouse.y - lastMouse.y) * 0.1;
             requestAnimationFrame(animate);
         }
         animate();
 
-        // 3D Card tilt logic
-        const cards = document.querySelectorAll('.card-3d');
-        cards.forEach(card => {
-            card.addEventListener('mousemove', (e) => {
-                const rect = card.getBoundingClientRect();
-                const x = e.clientX - rect.left - rect.width/2;
-                const y = e.clientY - rect.top - rect.height/2;
-                card.style.transform = `rotateY(${x/10}deg) rotateX(${-y/10}deg) translateZ(20px)`;
-            });
-            card.addEventListener('mouseleave', () => {
-                card.style.transform = `rotateY(0deg) rotateX(0deg) translateZ(0px)`;
-            });
-        });
-
-        // Mechanical Click Sound (Web API)
-        window.addEventListener('mousedown', () => {
-            const context = new AudioContext();
-            const osc = context.createOscillator();
-            const gain = context.createGain();
-            osc.type = 'square';
-            osc.frequency.setValueAtTime(100, context.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.00001, context.currentTime + 0.1);
-            osc.connect(gain);
-            gain.connect(context.destination);
-            osc.start();
-            osc.stop(context.currentTime + 0.1);
-            cursor.style.transform = 'scale(2)';
-        });
-        window.addEventListener('mouseup', () => cursor.style.transform = 'scale(1)');
+        function scrollToId(id) { document.getElementById(id).scrollIntoView({ behavior: 'smooth' }); }
     </script>
 </body>
 </html>
