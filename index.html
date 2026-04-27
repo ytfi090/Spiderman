@@ -3,785 +3,201 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Insomniac's Spider-Man Universe | Interactive Showcase</title>
+    <title>SPIDER-MAN: THE ULTIMATE EXPERIENCE</title>
     <style>
-        /* --- RESET & CORE STYLES --- */
         :root {
-            --sm-red: #E21B22;
-            --sm-blue: #004694;
-            --sm-dark: #0A0A10;
-            --sm-black: #050507;
-            --sm-white: #FFFFFF;
-            --text-glow: 0 0 10px rgba(255, 255, 255, 0.5);
-            --red-glow: 0 0 15px rgba(226, 27, 34, 0.7);
-            --ease: cubic-bezier(0.23, 1, 0.32, 1);
+            --red: #ff0015; --blue: #001eff; --white: #f0f0f0; --black: #020205;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        /* --- THE GLITCH OVERLAY --- */
+        body::after {
+            content: ""; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: repeating-linear-gradient(0deg, rgba(0,0,0,0.1), rgba(0,0,0,0.1) 1px, transparent 1px, transparent 2px);
+            pointer-events: none; z-index: 9999; opacity: 0.3;
+        }
+
         body {
-            font-family: 'Montserrat', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--sm-black);
-            color: var(--sm-white);
-            overflow-x: hidden;
-            line-height: 1.6;
+            background-color: var(--black); color: var(--white);
+            font-family: 'Inter', sans-serif; overflow-x: hidden;
+            cursor: none; /* We are building a custom web-cursor */
         }
 
-        h1, h2, h3 { font-weight: 800; text-transform: uppercase; letter-spacing: 1px; }
-
-        /* --- GLOBAL ELEMENTS & EFFECTS --- */
-        
-        /* Particle Canvas (Global Background) */
-        #particle-canvas {
+        /* --- THE WEB CURSOR --- */
+        #cursor {
+            position: fixed; width: 20px; height: 20px; background: var(--white);
+            border-radius: 50%; pointer-events: none; z-index: 10000;
+            mix-blend-mode: difference; transition: transform 0.1s ease;
+        }
+        #cursor-web {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            z-index: 1; pointer-events: none; opacity: 0.5;
+            pointer-events: none; z-index: 9998;
         }
 
-        /* Scanlines Overlay */
-        body::before {
-            content: "";
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%);
-            background-size: 100% 4px;
-            z-index: 100; pointer-events: none;
-        }
+        /* --- SECTIONS & 3D SPACE --- */
+        .container { perspective: 1200px; height: 100vh; overflow-y: auto; overflow-x: hidden; }
 
-        /* Scroll Reveal Utility */
-        .reveal { opacity: 0; transform: translateY(30px); transition: all 1s var(--ease); }
-        .reveal.active { opacity: 1; transform: translateY(0); }
-
-        /* General Section Layout */
         section {
-            position: relative;
-            padding: 100px 10%;
-            width: 100%;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            z-index: 2;
+            position: relative; height: 100vh; display: flex; align-items: center;
+            justify-content: center; transform-style: preserve-3d;
+            transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
-        /* --- SECTION 1: HERO (Cinematic Opening) --- */
-        #hero {
-            padding: 0;
-            overflow: hidden;
-            display: flex; align-items: center; justify-content: center;
+        /* --- SECTION 1: THE VOID HERO --- */
+        .hero-title {
+            font-size: clamp(4rem, 12vw, 15rem); font-weight: 900;
+            text-transform: uppercase; line-height: 0.8; text-align: center;
+            filter: drop-shadow(5px 5px var(--red)) drop-shadow(-5px -5px var(--blue));
+            animation: float 4s ease-in-out infinite;
         }
 
-        .hero-bg {
-            position: absolute; width: 110%; height: 110%;
-            background-image: url('https://media.rawg.io/media/games/03b/03b290740942e61f22144d9f6fd1bd0b.jpg'); /* Miles Morales Swing */
-            background-size: cover; background-position: center;
-            filter: blur(2px) brightness(0.6);
-            transform: translate(-5%, -5%);
-            z-index: 1;
+        @keyframes float { 0%, 100% { transform: translateY(0) rotateX(5deg); } 50% { transform: translateY(-20px) rotateX(-5deg); } }
+
+        /* --- THE SUIT LAB (GALLERY REINVENTED) --- */
+        .suit-lab {
+            display: flex; gap: 20px; width: 200%; animation: scroll-lab 30s linear infinite;
         }
+        @keyframes scroll-lab { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
 
-        .web-layer {
-            position: absolute; width: 100%; height: 100%;
-            background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MDAiIGhlaWdodD0iNDAwIiB2aWV3Qm94PSIwIDAgNDAwIDQwMCI+PGcgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjRkZGIiBzdHJva2Utd2lkdGg9IjAuNSIgc3Ryb2tlLW9wYWNpdHk9IjAuMSI+PHBhdGggZD0iTTAgNDAwTDE0MSAwaDI1OEw0MDAgNDAwek0wIDBoNDAwek00MDAgNDAwaDB6TTAgNDAwSDB6Ii8+PHBhdGggZD0iTTAgMjAwaDQwME0yMDAgMFY0MDAiLz48L2c+PC9zdmc+'); /* Simple tiled SVG web pattern */
-            opacity: 0.15; z-index: 2;
+        .suit-card {
+            width: 300px; height: 450px; background: #111; border: 1px solid var(--red);
+            flex-shrink: 0; transform: skewX(-5deg); overflow: hidden;
+            position: relative; transition: 0.5s;
         }
+        .suit-card:hover { transform: skewX(0deg) scale(1.1); z-index: 10; border-color: var(--blue); }
 
-        .hero-content {
-            position: relative; z-index: 3;
-            text-align: center;
-            perspective: 1000px;
+        .suit-card img { width: 100%; height: 100%; object-fit: cover; filter: grayscale(1); transition: 0.5s; }
+        .suit-card:hover img { filter: grayscale(0); }
+
+        /* --- THE SENSE ALERT --- */
+        .sense-alert {
+            position: absolute; top: 20%; left: 50%; transform: translateX(-50%);
+            color: yellow; font-weight: bold; font-style: italic; opacity: 0;
+            animation: sense-flash 2s infinite; pointer-events: none;
         }
+        @keyframes sense-flash { 0%, 100% { opacity: 0; transform: scale(0.8) translateX(-50%); } 50% { opacity: 1; transform: scale(1.2) translateX(-50%); } }
 
-        .hero-logo {
-            width: 80%; max-width: 800px;
-            filter: drop-shadow(var(--red-glow));
-            transform: translateZ(50px);
-            opacity: 0; animation: logoFadeIn 2s var(--ease) forwards 0.5s;
+        /* --- SCROLL PROGRESS HUD --- */
+        .hud-line {
+            position: fixed; left: 50px; top: 50%; transform: translateY(-50%);
+            width: 2px; height: 200px; background: rgba(255,255,255,0.1);
         }
-
-        .hero-subtitle {
-            margin-top: -30px; font-size: 1.5rem; color: var(--sm-white);
-            text-transform: uppercase; letter-spacing: 5px; opacity: 0.8;
-            text-shadow: var(--text-glow);
-            opacity: 0; animation: subtitleFadeIn 2s var(--ease) forwards 1.2s;
-        }
-
-        @keyframes logoFadeIn { from { opacity: 0; transform: translateZ(50px) scale(1.1); } to { opacity: 1; transform: translateZ(0px) scale(1); } }
-        @keyframes subtitleFadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 0.8; transform: translateY(0); } }
-
-        /* --- SECTION 2: GAMES & DLC (3D Tilting Cards) --- */
-        #games {
-            background: radial-gradient(circle at center, var(--sm-dark) 0%, var(--sm-black) 100%);
-        }
-
-        .section-header {
-            text-align: center; margin-bottom: 60px;
-            font-size: 3rem; color: var(--sm-red);
-            text-shadow: var(--red-glow);
-        }
-
-        .cards-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 40px;
-            perspective: 2000px; /* Essential for 3D effect */
-        }
-
-        /* 3D Tilt Card Base */
-        .card-wrap {
-            height: 450px;
-            position: relative;
-            transform-style: preserve-3d;
-            transition: transform 0.1s ease;
-        }
-
-        .card {
-            width: 100%; height: 100%;
-            background-color: #111;
-            border-radius: 12px;
-            overflow: hidden;
-            position: absolute;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.5);
-            border: 1px solid rgba(255,255,255,0.05);
-            transform-style: preserve-3d;
-            transition: box-shadow 0.3s ease, border-color 0.3s ease;
-        }
-
-        .card:hover {
-            box-shadow: 0 15px 30px rgba(0,0,0,0.7), var(--red-glow);
-            border-color: rgba(226, 27, 34, 0.4);
-        }
-
-        /* Card Image (Background) */
-        .card-image {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background-size: cover; background-position: center;
-            transition: transform 0.3s ease;
-            transform: translateZ(0px); /* Base Z */
-        }
-
-        .card-wrap:hover .card-image { transform: translateZ(20px) scale(1.05); }
-
-        /* Card Text Overlays */
-        .card-content {
-            position: absolute; bottom: 0; left: 0; width: 100%;
-            padding: 30px;
-            background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0) 100%);
-            transform: translateZ(40px); /* Pop out the text */
-            transition: transform 0.3s ease;
-        }
-
-        .card-wrap:hover .card-content { transform: translateZ(60px) translateY(-5px); }
-
-        .card-type {
-            font-size: 0.8rem; text-transform: uppercase; color: var(--sm-red);
-            font-weight: bold; letter-spacing: 2px;
-            margin-bottom: 5px;
-        }
-
-        .card-title { font-size: 1.8rem; margin-bottom: 10px; color: var(--sm-white); }
-
-        /* Individual Card Background Images */
-        .card-1 .card-image { background-image: url('https://media.rawg.io/media/games/cd3/cd3c9c7d3e95cb1608fd6289f0302b62.jpg'); } /* SM1 Cover */
-        .card-2 .card-image { background-image: url('https://media.rawg.io/media/games/03b/03b290740942e61f22144d9f6fd1bd0b.jpg'); } /* MM Cover */
-        .card-3 .card-image { background-image: url('https://media.rawg.io/media/games/b2c/b2ca1277a16d84a329d4791a82f80875.jpg'); } /* SM2 Cover (Using alternate official art) */
-        
-        /* DLC Cards (Placeholder stylized visuals) */
-        .card-4 .card-image { background: linear-gradient(45deg, #111, #333); } 
-        .card-5 .card-image { background: linear-gradient(45deg, #111, #333); }
-        .card-6 .card-image { background: linear-gradient(45deg, #111, #333); }
-
-        .card-image.dlc {
-            background-blend-mode: multiply;
-            opacity: 0.6;
-        }
-        
-        .card-4 .card-image { background-image: url('https://image.api.playstation.com/vulcan/img/rnd/202010/2621/7Cms9nN5W8YVq5V0Vb4o5U8D.png'); } /* The Heist */
-        .card-5 .card-image { background-image: url('https://image.api.playstation.com/vulcan/img/rnd/202010/2621/bVvRjLdYlG1Y2jC4f6wX7X5D.png'); } /* Turf Wars */
-        .card-6 .card-image { background-image: url('https://image.api.playstation.com/vulcan/img/rnd/202010/2621/4a8Xf1L5v5gHjLdYlG1Y2jC4.png'); } /* Silver Lining */
-
-
-        /* --- SECTION 3: TIMELINE (Play Order) --- */
-        #timeline {
-            background-color: var(--sm-black);
-        }
-
-        .timeline-container {
-            position: relative; max-width: 900px; margin: 0 auto;
-            padding: 40px 0;
-        }
-
-        /* The Vertical Line */
-        .timeline-container::before {
-            content: '';
-            position: absolute; left: 50%; top: 0;
-            width: 4px; height: 100%;
-            background: linear-gradient(to bottom, var(--sm-blue), var(--sm-red), var(--sm-blue));
-            transform: translateX(-50%);
-            box-shadow: 0 0 10px rgba(0, 70, 148, 0.5);
-        }
-
-        .timeline-item {
-            position: relative; width: 50%;
-            padding: 20px 40px;
-            margin-bottom: 60px;
-            opacity: 0; transform: translateX(-50px);
-            transition: all 0.8s var(--ease);
-        }
-
-        .timeline-item.active { opacity: 1; transform: translateX(0); }
-
-        .timeline-item:nth-child(even) { left: 50%; transform: translateX(50px); }
-        .timeline-item:nth-child(even).active { transform: translateX(0); }
-
-        /* The Dot */
-        .timeline-item::after {
-            content: '';
-            position: absolute; width: 24px; height: 24px;
-            background-color: var(--sm-black);
-            border: 4px solid var(--sm-red);
-            border-radius: 50%;
-            top: 25px; right: -12px;
-            z-index: 10;
-            transition: background 0.3s ease;
-        }
-
-        .timeline-item:nth-child(even)::after { left: -12px; }
-
-        .timeline-item.active::after {
-            background-color: var(--sm-red);
-            box-shadow: var(--red-glow);
-        }
-
-        .timeline-content {
-            padding: 25px;
-            background-color: rgba(255,255,255,0.03);
-            border-radius: 8px;
-            border: 1px solid rgba(255,255,255,0.05);
-            transition: border-color 0.3s ease;
-        }
-        
-        .timeline-item:hover .timeline-content { border-color: rgba(0, 70, 148, 0.5); }
-
-        .tl-order { color: var(--sm-blue); font-weight: bold; margin-bottom: 5px; font-size: 0.9rem;}
-        .tl-title { font-size: 1.6rem; color: var(--sm-white); margin-bottom: 10px; }
-        .tl-summary { font-size: 1rem; color: rgba(255,255,255,0.7); }
-
-        /* --- SECTION 4: CHARACTERS --- */
-        #characters {
-            background: linear-gradient(180deg, var(--sm-black) 0%, #101015 50%, var(--sm-black) 100%);
-        }
-
-        .char-grid {
-            display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 40px;
-        }
-
-        .char-card {
-            background-color: rgba(255,255,255,0.03);
-            border-radius: 12px;
-            overflow: hidden;
-            transition: transform 0.4s var(--ease), box-shadow 0.4s var(--ease);
-            border: 1px solid rgba(255,255,255,0.05);
-        }
-
-        .char-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            border-color: rgba(0, 70, 148, 0.4);
-        }
-
-        .char-img-container {
-            height: 320px; overflow: hidden;
-            background-color: #000;
-        }
-
-        .char-img {
-            width: 100%; height: 100%;
-            object-fit: cover; object-position: center top;
-            transition: transform 0.5s ease;
-        }
-
-        .char-card:hover .char-img { transform: scale(1.05); }
-
-        .char-info { padding: 25px; }
-        .char-name { font-size: 1.6rem; color: var(--sm-white); margin-bottom: 5px; }
-        .char-role { color: var(--sm-blue); font-weight: bold; text-transform: uppercase; font-size: 0.85rem; letter-spacing: 1px;}
-        .char-desc { margin-top: 10px; font-size: 0.95rem; color: rgba(255,255,255,0.7); }
-
-        /* --- SECTION 5: WHY PLAY (Parallax Scrolling) --- */
-        #whyplay {
-            padding: 0;
-            overflow: hidden;
-            background-color: var(--sm-black);
-        }
-
-        .whyplay-bg {
-            position: absolute; width: 100%; height: 120%;
-            background-image: url('https://media.rawg.io/media/games/8d1/8d115e0ca2d6556e9c9c10842e61f22.jpg'); /* Swinging over NYC */
-            background-size: cover; background-position: center;
-            background-attachment: fixed; /* Parallax Fallback */
-            filter: brightness(0.4) blur(1px);
-            z-index: 1;
-        }
-
-        /* Advanced JavaScript Parallax will manipulate this */
-        #whyplay-background-dynamic {
-            background-attachment: scroll;
-        }
-
-        .whyplay-content {
-            position: relative; z-index: 2;
-            padding: 100px 10%;
-            max-width: 800px;
-            margin: 0 auto;
-            text-align: center;
-        }
-
-        .whyplay-content .section-header { color: var(--sm-white); text-shadow: var(--text-glow); }
-
-        .feature-list {
-            list-style: none;
-            margin-top: 40px;
-        }
-
-        .feature-item {
-            margin-bottom: 40px;
-            opacity: 0; transform: translateY(20px);
-            transition: all 0.8s var(--ease);
-        }
-
-        .feature-item.active { opacity: 1; transform: translateY(0); }
-
-        .feature-icon {
-            font-size: 2.5rem; color: var(--sm-red); margin-bottom: 15px;
-            text-shadow: var(--red-glow);
-        }
-
-        .feature-title { font-size: 1.8rem; margin-bottom: 10px; }
-        .feature-desc { font-size: 1.1rem; color: rgba(255,255,255,0.8); }
-
-        /* --- SECTION 6: GALLERY --- */
-        #gallery {
-            background-color: var(--sm-black);
-        }
-
-        .gallery-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 20px;
-        }
-
-        .gallery-item {
-            position: relative;
-            height: 250px;
-            border-radius: 8px;
-            overflow: hidden;
-            cursor: pointer;
-            transition: transform 0.3s ease;
-        }
-
-        .gallery-item:hover { transform: scale(1.03); }
-
-        .gallery-img {
-            width: 100%; height: 100%;
-            object-fit: cover;
-            transition: filter 0.3s ease;
-        }
-
-        .gallery-item:hover .gallery-img { filter: brightness(1.1) contrast(1.1); }
-        
-        /* Placeholder styling for gallery */
-        .gallery-item.placeholder {
-            background: rgba(255,255,255,0.03);
-            border: 2px dashed rgba(255,255,255,0.1);
-            display: flex; align-items: center; justify-content: center;
-            color: rgba(255,255,255,0.3);
-            text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px;
-        }
-
-        /* --- MEDIA QUERIES --- */
-        @media (max-width: 900px) {
-            .timeline-item { width: 100%; padding-left: 50px; padding-right: 0; }
-            .timeline-item:nth-child(even) { left: 0%; }
-            .timeline-container::before { left: 20px; }
-            .timeline-item::after { left: 8px !important; }
-            section { padding: 80px 5%; }
-            .section-header { font-size: 2.4rem; }
+        .hud-progress {
+            position: absolute; top: 0; left: 0; width: 100%;
+            background: var(--red); box-shadow: 0 0 10px var(--red);
+            transition: height 0.3s ease;
         }
     </style>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;800&display=swap" rel="stylesheet">
 </head>
 <body>
 
-    <canvas id="particle-canvas"></canvas>
+    <div id="cursor"></div>
+    <canvas id="cursor-web"></canvas>
 
-    <section id="hero">
-        <div class="hero-bg"></div>
-        <div class="web-layer"></div>
-        <div class="hero-content">
-            <img src="https://gmedia.playstation.com/is/image/SIEPDC/marvels-spider-man-2-logo-01-en-14sep21?$native$" alt="Marvel's Spider-Man" class="hero-logo">
-            <p class="hero-subtitle">Insomniac Games Universe</p>
-        </div>
-    </section>
+    <div class="hud-line"><div class="hud-progress" id="progress-bar"></div></div>
 
-    <section id="games">
-        <h2 class="section-header reveal">The Collection</h2>
-        <div class="cards-container">
-            
-            <div class="card-wrap reveal card-1" data-tilt>
-                <div class="card">
-                    <div class="card-image"></div>
-                    <div class="card-content">
-                        <div class="card-type">Full Game</div>
-                        <h3 class="card-title">Marvel's Spider-Man</h3>
-                    </div>
+    <div class="container" id="main-scroll">
+        
+        <section id="hero">
+            <h1 class="hero-title">BE<br>GREATER</h1>
+            <div class="sense-alert">/// SPIDER-SENSE TINGLING ///</div>
+        </section>
+
+        <section id="suits">
+            <div class="suit-lab">
+                <div class="suit-card"><img src="https://gmedia.playstation.com/is/image/SIEPDC/marvels-spider-man-2-screenshot-02-en-01jun23?$native$"></div>
+                <div class="suit-card"><img src="https://gmedia.playstation.com/is/image/SIEPDC/marvels-spider-man-miles-morales-screenshot-02-discl-en-02oct20?$native$"></div>
+                <div class="suit-card"><img src="https://gmedia.playstation.com/is/image/SIEPDC/marvels-spider-man-screen-08-ps4-us-12jun18?$native$"></div>
+                <div class="suit-card"><img src="https://gmedia.playstation.com/is/image/SIEPDC/marvels-spider-man-2-screenshot-13-en-01jun23?$native$"></div>
+                <div class="suit-card"><img src="https://gmedia.playstation.com/is/image/SIEPDC/marvels-spider-man-2-screenshot-02-en-01jun23?$native$"></div>
+                <div class="suit-card"><img src="https://gmedia.playstation.com/is/image/SIEPDC/marvels-spider-man-miles-morales-screenshot-02-discl-en-02oct20?$native$"></div>
+            </div>
+        </section>
+
+        <section id="vortex" style="background: radial-gradient(circle, #050510 0%, #000 100%);">
+            <div style="text-align: center;">
+                <h2 style="font-size: 5rem; letter-spacing: -2px;">THE MULTIVERSE</h2>
+                <p style="color: var(--blue); letter-spacing: 10px;">CHRONOLOGICAL ORDER</p>
+                <div style="margin-top: 50px; display: flex; flex-direction: column; gap: 20px;">
+                    <div class="tl-node">2018 | PETER PARKER</div>
+                    <div class="tl-node">2020 | MILES MORALES</div>
+                    <div class="tl-node">2023 | THE SYMBIOTE</div>
                 </div>
             </div>
+        </section>
 
-            <div class="card-wrap reveal card-4" data-tilt>
-                <div class="card">
-                    <div class="card-image dlc"></div>
-                    <div class="card-content">
-                        <div class="card-type">DLC: The City That Never Sleeps</div>
-                        <h3 class="card-title">The Heist</h3>
-                    </div>
-                </div>
-            </div>
-
-            <div class="card-wrap reveal card-2" data-tilt>
-                <div class="card">
-                    <div class="card-image"></div>
-                    <div class="card-content">
-                        <div class="card-type">Full Game</div>
-                        <h3 class="card-title">Miles Morales</h3>
-                    </div>
-                </div>
-            </div>
-
-            <div class="card-wrap reveal card-3" data-tilt>
-                <div class="card">
-                    <div class="card-image"></div>
-                    <div class="card-content">
-                        <div class="card-type">Full Game</div>
-                        <h3 class="card-title">Marvel's Spider-Man 2</h3>
-                    </div>
-                </div>
-            </div>
-
-            <div class="card-wrap reveal card-5" data-tilt>
-                <div class="card">
-                    <div class="card-image dlc"></div>
-                    <div class="card-content">
-                        <div class="card-type">DLC</div>
-                        <h3 class="card-title">Turf Wars</h3>
-                    </div>
-                </div>
-            </div>
-
-            <div class="card-wrap reveal card-6" data-tilt>
-                <div class="card">
-                    <div class="card-image dlc"></div>
-                    <div class="card-content">
-                        <div class="card-type">DLC</div>
-                        <h3 class="card-title">Silver Lining</h3>
-                    </div>
-                </div>
-            </div>
-
-        </div>
-    </section>
-
-    <section id="timeline">
-        <h2 class="section-header reveal">Chronological Saga</h2>
-        <div class="timeline-container">
-            
-            <div class="timeline-item reveal">
-                <div class="timeline-content">
-                    <div class="tl-order">01</div>
-                    <h3 class="tl-title">Marvel's Spider-Man</h3>
-                    <p class="tl-summary">An experienced Peter Parker balances his chaotic personal life with his responsibility as the protector of NYC, facing Mr. Negative and the Sinister Six.</p>
-                </div>
-            </div>
-
-            <div class="timeline-item reveal">
-                <div class="timeline-content">
-                    <div class="tl-order">02</div>
-                    <h3 class="tl-title">The City That Never Sleeps (DLC)</h3>
-                    <p class="tl-summary">Following the main game, Peter deals with a mob war sparked by Black Cat and Hammerhead, leading to an unlikely alliance with Silver Sable.</p>
-                </div>
-            </div>
-
-            <div class="timeline-item reveal">
-                <div class="timeline-content">
-                    <div class="tl-order">03</div>
-                    <h3 class="tl-title">Spider-Man: Miles Morales</h3>
-                    <p class="tl-summary">While Peter is abroad, Miles Morales comes into his own as the new Spider-Man, defending his home in Harlem from a high-tech war between Roxxon and the Underground.</p>
-                </div>
-            </div>
-
-            <div class="timeline-item reveal">
-                <div class="timeline-content">
-                    <div class="tl-order">04</div>
-                    <h3 class="tl-title">Marvel's Spider-Man 2</h3>
-                    <p class="tl-summary">Peter and Miles team up to face their greatest challenges yet: Kraven the Hunter's great hunt and the invasive, corrupting power of the Venom symbiote.</p>
-                </div>
-            </div>
-
-        </div>
-    </section>
-
-    <section id="characters">
-        <h2 class="section-header reveal">Heroes & Villains</h2>
-        <div class="char-grid">
-            
-            <div class="char-card reveal">
-                <div class="char-img-container">
-                    <img src="https://gmedia.playstation.com/is/image/SIEPDC/marvels-spider-man-screen-02-ps4-us-12jun18?$native$" alt="Peter Parker" class="char-img">
-                </div>
-                <div class="char-info">
-                    <h3 class="char-name">Peter Parker</h3>
-                    <p class="char-role">The Original Spider-Man</p>
-                    <p class="char-desc">The veteran protector of New York, grappling with the loss of Aunt May and the return of his best friend, Harry Osborn.</p>
-                </div>
-            </div>
-
-            <div class="char-card reveal">
-                <div class="char-img-container">
-                    <img src="https://gmedia.playstation.com/is/image/SIEPDC/marvels-spider-man-miles-morales-screenshot-01-discl-en-02oct20?$native$" alt="Miles Morales" class="char-img">
-                </div>
-                <div class="char-info">
-                    <h3 class="char-name">Miles Morales</h3>
-                    <p class="char-role">The New Spider-Man</p>
-                    <p class="char-desc">Peter’s apprentice, now a full-fledged hero with unique bio-electric Venom powers and camouflage abilities.</p>
-                </div>
-            </div>
-
-            <div class="char-card reveal">
-                <div class="char-img-container">
-                    <img src="https://static0.gamerantimages.com/wordpress/wp-content/uploads/2023/11/marvels-spider-man-doctor-octopus-sinister-six.jpg" alt="Doctor Octopus" class="char-img">
-                </div>
-                <div class="char-info">
-                    <h3 class="char-name">Dr. Otto Octavius</h3>
-                    <p class="char-role">Main Villain (SM1)</p>
-                    <p class="char-desc">Peter’s mentor whose descent into madness led to the creation of Doc Ock and the Sinister Six.</p>
-                </div>
-            </div>
-
-            <div class="char-card reveal">
-                <div class="char-img-container">
-                    <img src="https://gmedia.playstation.com/is/image/SIEPDC/marvels-spider-man-2-screenshot-13-en-01jun23?$native$" alt="Venom" class="char-img">
-                </div>
-                <div class="char-info">
-                    <h3 class="char-name">Venom</h3>
-                    <p class="char-role">Main Villain (SM2)</p>
-                    <p class="char-desc">The ultimate symbiote adversary, formed when the alien suit bonds with Harry Osborn, threatening to "heal the world" through force.</p>
-                </div>
-            </div>
-
-        </div>
-    </section>
-
-    <section id="whyplay">
-        <div id="whyplay-background-dynamic" class="whyplay-bg"></div>
-        <div class="whyplay-content">
-            <h2 class="section-header reveal">The Insomniac Difference</h2>
-            <ul class="feature-list">
-                
-                <li class="feature-item reveal-feature">
-                    <div class="feature-icon">🕸️</div>
-                    <h3 class="feature-title">Unmatched Traversal</h3>
-                    <p class="feature-desc">The standard-bearer for superhero movement. Swinging through Insomniac's NYC feels fluid, intuitive, and endlessly satisfying, augmented by web wings in the sequel.</p>
-                </li>
-
-                <li class="feature-item reveal-feature">
-                    <div class="feature-icon">❤️</div>
-                    <h3 class="feature-title">Heartfelt Narrative</h3>
-                    <p class="feature-desc">They understand that the best Spider-Man stories are about the man beneath the mask. The narrative weight of Peter and Miles' personal lives is as compelling as the boss fights.</p>
-                </li>
-
-                <li class="feature-item reveal-feature">
-                    <div class="feature-icon">💥</div>
-                    <h3 class="feature-title">Dynamic Combat</h3>
-                    <p class="feature-desc">A perfect blend of acrobatic improvisation, gadget gameplay, and unique powers (like Miles' bio-electricity) that makes you feel exactly like Spider-Man.</p>
-                </li>
-
-            </ul>
-        </div>
-    </section>
-
-    <section id="gallery">
-        <h2 class="section-header reveal">Visual Showcase</h2>
-        <div class="gallery-grid reveal">
-            <div class="gallery-item"><img src="https://gmedia.playstation.com/is/image/SIEPDC/marvels-spider-man-2-screenshot-02-en-01jun23?$native$" alt="SM2 Screenshot" class="gallery-img"></div>
-            <div class="gallery-item"><img src="https://gmedia.playstation.com/is/image/SIEPDC/marvels-spider-man-miles-morales-screenshot-02-discl-en-02oct20?$native$" alt="MM Screenshot" class="gallery-img"></div>
-            <div class="gallery-item"><img src="https://gmedia.playstation.com/is/image/SIEPDC/marvels-spider-man-screen-08-ps4-us-12jun18?$native$" alt="SM1 Screenshot" class="gallery-img"></div>
-            <div class="gallery-item"><img src="https://gmedia.playstation.com/is/image/SIEPDC/marvels-spider-man-2-screenshot-10-en-01jun23?$native$" alt="SM2 Screenshot" class="gallery-img"></div>
-            <div class="gallery-item"><img src="https://gmedia.playstation.com/is/image/SIEPDC/marvels-spider-man-miles-morales-screenshot-05-discl-en-02oct20?$native$" alt="MM Screenshot" class="gallery-img"></div>
-            <div class="gallery-item"><img src="https://gmedia.playstation.com/is/image/SIEPDC/marvels-spider-man-screen-03-ps4-us-12jun18?$native$" alt="SM1 Screenshot" class="gallery-img"></div>
-            
-            <div class="gallery-item placeholder"><span>Your Uploaded Image</span></div>
-            <div class="gallery-item placeholder"><span>Your Uploaded Image</span></div>
-        </div>
-    </section>
+    </div>
 
     <script>
-        /* --- 1. WEB PARTICLE EFFECT (Floating particles) --- */
-        const canvas = document.getElementById('particle-canvas');
+        const cursor = document.getElementById('cursor');
+        const canvas = document.getElementById('cursor-web');
         const ctx = canvas.getContext('2d');
+        const scroller = document.getElementById('main-scroll');
+        const progressBar = document.getElementById('progress-bar');
+
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
 
-        let particlesArray = [];
-        const numberOfParticles = 60; // Subtle density
+        let mouse = { x: 0, y: 0 };
+        let lastMouse = { x: 0, y: 0 };
 
-        class Particle {
-            constructor() {
-                this.x = Math.random() * canvas.width;
-                this.y = Math.random() * canvas.height;
-                this.size = Math.random() * 2 + 0.5; // Small, like dust/web strand segments
-                this.speedX = Math.random() * 0.5 - 0.25; // Very slow drift
-                this.speedY = Math.random() * 0.5 - 0.25;
-                this.color = Math.random() > 0.5 ? 'rgba(255, 255, 255, 0.3)' : 'rgba(226, 27, 34, 0.1)'; // Mostly white, subtle red
-            }
-            update() {
-                this.x += this.speedX;
-                this.y += this.speedY;
-                // Wrap around screen
-                if (this.x > canvas.width) this.x = 0;
-                else if (this.x < 0) this.x = canvas.width;
-                if (this.y > canvas.height) this.y = 0;
-                else if (this.y < 0) this.y = canvas.height;
-            }
-            draw() {
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                ctx.fillStyle = this.color;
-                ctx.fill();
-            }
-        }
-
-        function initParticles() {
-            particlesArray = [];
-            for (let i = 0; i < numberOfParticles; i++) {
-                particlesArray.push(new Particle());
-            }
-        }
-
-        function animateParticles() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            for (let i = 0; i < particlesArray.length; i++) {
-                particlesArray[i].update();
-                particlesArray[i].draw();
-            }
-            requestAnimationFrame(animateParticles);
-        }
-
-        initParticles();
-        animateParticles();
-
-        window.addEventListener('resize', function() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-            initParticles();
+        // 1. CUSTOM CURSOR & WEB TRAIL
+        window.addEventListener('mousemove', (e) => {
+            mouse.x = e.clientX;
+            mouse.y = e.clientY;
+            cursor.style.transform = `translate(${mouse.x - 10}px, ${mouse.y - 10}px)`;
         });
 
+        function drawWeb() {
+            ctx.clearRect(0,0, canvas.width, canvas.height);
+            ctx.beginPath();
+            ctx.moveTo(lastMouse.x, lastMouse.y);
+            ctx.lineTo(mouse.x, mouse.y);
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.2)';
+            ctx.lineWidth = 1;
+            ctx.stroke();
 
-        /* --- 2. 3D TILTING CARDS EFFECT --- */
-        const cards = document.querySelectorAll('[data-tilt]');
-        
-        cards.forEach(card => {
-            card.addEventListener('mousemove', runTilt);
-            card.addEventListener('mouseleave', resetTilt);
+            // Ease the "tail" of the web
+            lastMouse.x += (mouse.x - lastMouse.x) * 0.1;
+            lastMouse.y += (mouse.y - lastMouse.y) * 0.1;
+
+            requestAnimationFrame(drawWeb);
+        }
+        drawWeb();
+
+        // 2. SCROLL PROGRESS & 3D TILT
+        scroller.addEventListener('scroll', () => {
+            const scrolled = scroller.scrollTop;
+            const max = scroller.scrollHeight - scroller.clientHeight;
+            const percent = (scrolled / max) * 100;
+            progressBar.style.height = percent + '%';
+
+            // Apply a slight tilt to all sections based on scroll speed
+            const sections = document.querySelectorAll('section');
+            sections.forEach(s => {
+                const speed = 0.05;
+                s.style.transform = `rotateX(${(scrolled * speed) % 10}deg)`;
+            });
         });
 
-        function runTilt(e) {
-            const card = this;
-            const cardRect = card.getBoundingClientRect();
-            const cardWidth = cardRect.width;
-            const cardHeight = cardRect.height;
-            
-            // Get mouse position relative to card center (0,0 is center)
-            const mouseX = e.clientX - cardRect.left - cardWidth / 2;
-            const mouseY = e.clientY - cardRect.top - cardHeight / 2;
-
-            // Calculate rotation (max rotation approx 10 degrees)
-            const angleX = (mouseY / (cardHeight / 2)) * -10; 
-            const angleY = (mouseX / (cardWidth / 2)) * 10;
-
-            // Apply transformation
-            card.style.transform = `rotateX(${angleX}deg) rotateY(${angleY}deg)`;
-        }
-
-        function resetTilt() {
-            this.style.transform = `rotateX(0deg) rotateY(0deg)`;
-        }
-
-
-        /* --- 3. PARALLAX SCROLLING (Section 5 Background) --- */
-        const whyPlayBg = document.getElementById('whyplay-background-dynamic');
-        
-        window.addEventListener('scroll', function() {
-            // Check if Section 5 is in view (rough check for performance)
-            const rect = document.getElementById('whyplay').getBoundingClientRect();
-            if (rect.top < window.innerHeight && rect.bottom > 0) {
-                // Calculate how far the section has scrolled relative to viewport
-                const scrolledLines = window.scrollY - (document.getElementById('whyplay').offsetTop);
-                // Move background slower than foreground (factor of 0.4)
-                const yPos = scrolledLines * 0.4;
-                // Apply the movement, maintaining the default brightness/blur filters
-                whyPlayBg.style.transform = `translateY(${yPos}px)`;
-            }
+        // 3. SOUND EFFECT (Mechanical Keyboard Style)
+        window.addEventListener('mousedown', () => {
+            // This replicates the "friendly but mechanical" feel you mentioned
+            cursor.style.transform += ' scale(0.5)';
+            const audio = new AudioContext();
+            const osc = audio.createOscillator();
+            const gain = audio.createGain();
+            osc.connect(gain);
+            gain.connect(audio.destination);
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(150, audio.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.0001, audio.currentTime + 0.1);
+            osc.start();
+            osc.stop(audio.currentTime + 0.1);
         });
 
-
-        /* --- 4. SCROLL REVEAL ANIMATIONS (Intersection Observer) --- */
-        
-        // General Reveals (Sections, Cards, Grid)
-        const revealElements = document.querySelectorAll('.reveal');
-        
-        const revealObserver = new IntersectionObserver((entries, observer) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('active');
-                    observer.unobserve(entry.target); // Only reveal once
-                }
-            });
-        }, { threshold: 0.15 }); // Reveal when 15% in view
-
-        revealElements.forEach(el => revealObserver.observe(el));
-
-
-        // Special Reveal for Timeline Items (Cascading effect)
-        const timelineItems = document.querySelectorAll('.timeline-item');
-        
-        const timelineObserver = new IntersectionObserver((entries, observer) => {
-            entries.forEach((entry, index) => {
-                if (entry.isIntersecting) {
-                    // Add a slight delay based on index for cascade
-                    setTimeout(() => {
-                        entry.target.classList.add('active');
-                    }, index * 100); 
-                    observer.unobserve(entry.target);
-                }
-            });
-        }, { threshold: 0.3 });
-
-        timelineItems.forEach(el => timelineObserver.observe(el));
-
-
-        // Feature Items Reveal (Cascading in Why Play section)
-        const featureItems = document.querySelectorAll('.reveal-feature');
-
-        const featureObserver = new IntersectionObserver((entries, observer) => {
-             entries.forEach((entry, index) => {
-                if (entry.isIntersecting) {
-                    setTimeout(() => {
-                        entry.target.classList.add('active');
-                    }, index * 200);
-                    observer.unobserve(entry.target);
-                }
-            });
-        }, { threshold: 0.4 });
-
-        featureItems.forEach(el => featureObserver.observe(el));
+        window.addEventListener('mouseup', () => {
+            cursor.style.transform = cursor.style.transform.replace(' scale(0.5)', '');
+        });
 
     </script>
 </body>
