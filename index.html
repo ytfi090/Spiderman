@@ -3,167 +3,205 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SPIDER-MAN | THE INSOMNIAC OMNIBUS</title>
+    <title>SPIDER-MAN: THE COMPLETE INSOMNIAC ARCHIVE</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Syncopate:wght@700&family=Inter:wght@300;400;700;900&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Syncopate:wght@700&family=Inter:wght@300;400;600;900&display=swap');
 
         :root {
-            --red: #E21B22; --blue: #004694; --black: #050508;
-            --white: #ffffff; --gray: #1a1a1a; --text-dim: #a0a0a0;
+            --red: #E21B22; --blue: #004694; --black: #020204;
+            --white: #ffffff; --gray: #0f0f12; --text-dim: #999;
+            --glass: rgba(255, 255, 255, 0.03);
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * { margin: 0; padding: 0; box-sizing: border-box; scroll-behavior: smooth; }
         body { 
             background-color: var(--black); color: var(--white); 
             font-family: 'Inter', sans-serif; overflow-x: hidden;
-            cursor: none; scroll-behavior: smooth;
+            cursor: none;
         }
 
-        /* --- INITIALIZATION OVERLAY --- */
+        /* --- OVERBOARD UI --- */
         #boot-screen {
             position: fixed; inset: 0; background: var(--black); z-index: 20000;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
-            transition: opacity 1s ease;
         }
         .boot-btn {
-            padding: 20px 40px; background: transparent; border: 1px solid var(--red);
+            padding: 25px 50px; background: transparent; border: 2px solid var(--blue);
             color: var(--white); font-family: 'Syncopate'; cursor: pointer;
-            letter-spacing: 5px; transition: 0.3s;
+            letter-spacing: 8px; transition: 0.4s; position: relative;
         }
-        .boot-btn:hover { background: var(--red); box-shadow: 0 0 30px var(--red); }
+        .boot-btn:hover { background: var(--blue); box-shadow: 0 0 50px var(--blue); transform: scale(1.05); }
 
-        /* --- UI OVERLAYS --- */
         #cursor {
-            position: fixed; width: 8px; height: 8px; background: var(--white);
+            position: fixed; width: 6px; height: 6px; background: var(--red);
             border-radius: 50%; pointer-events: none; z-index: 10000;
-            box-shadow: 0 0 15px var(--white); mix-blend-mode: difference;
+            box-shadow: 0 0 15px var(--red); mix-blend-mode: screen;
         }
-        #web-canvas { position: fixed; top: 0; left: 0; z-index: 9999; pointer-events: none; }
 
-        /* --- MUSIC CONTROLLER HUD --- */
         .music-hud {
-            position: fixed; top: 30px; right: 30px; z-index: 10001;
-            display: flex; align-items: center; gap: 15px;
-            background: rgba(0,0,0,0.6); padding: 10px 20px;
-            border: 1px solid var(--glass); border-radius: 50px;
-            backdrop-filter: blur(10px);
+            position: fixed; top: 20px; right: 20px; z-index: 10001;
+            background: var(--gray); border: 1px solid var(--blue);
+            padding: 10px 20px; border-radius: 4px; display: flex; gap: 15px; align-items: center;
         }
-        .music-ctrl {
-            background: none; border: none; color: var(--white);
-            font-family: 'Syncopate'; font-size: 0.7rem; cursor: pointer;
-            letter-spacing: 2px;
+        .music-btn { background: none; border: none; color: var(--white); font-family: 'Syncopate'; font-size: 0.6rem; cursor: pointer; opacity: 0.7; }
+        .music-btn:hover { opacity: 1; color: var(--red); }
+
+        /* --- CONTENT SECTIONS --- */
+        section { min-height: 100vh; padding: 120px 10%; position: relative; }
+        .section-tag { color: var(--red); font-family: 'Syncopate'; font-size: 0.6rem; letter-spacing: 4px; margin-bottom: 20px; display: block; }
+        h1 { font-family: 'Syncopate'; font-size: 8vw; line-height: 0.8; margin-bottom: 40px; }
+        h2 { font-family: 'Syncopate'; font-size: 2.5rem; margin-bottom: 20px; border-left: 4px solid var(--red); padding-left: 20px; }
+        h3 { color: var(--blue); margin: 20px 0 10px; text-transform: uppercase; letter-spacing: 2px; }
+        p { color: var(--text-dim); line-height: 1.7; margin-bottom: 20px; font-weight: 300; }
+
+        /* --- GAME BREAKDOWN --- */
+        .game-analysis { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; margin-bottom: 100px; align-items: center; }
+        .feature-list { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 20px; }
+        .feature-item { background: var(--gray); padding: 15px; border: 1px solid #222; }
+        .feature-item strong { color: var(--white); display: block; margin-bottom: 5px; }
+
+        /* --- DOSSIER (CHARACTERS) --- */
+        .dossier-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 30px; }
+        .dossier-card {
+            background: linear-gradient(145deg, #0a0a0c, #141418);
+            border: 1px solid #222; padding: 30px; transition: 0.3s;
         }
-        .music-ctrl:hover { color: var(--red); }
-        .track-info { font-size: 0.6rem; color: var(--text-dim); text-transform: uppercase; width: 150px; overflow: hidden; white-space: nowrap; }
+        .dossier-card:hover { border-color: var(--blue); transform: translateY(-5px); }
+        .dossier-card h4 { font-family: 'Syncopate'; font-size: 1rem; margin-bottom: 15px; color: var(--white); }
+        .actor-tag { font-size: 0.7rem; color: var(--red); display: block; margin-bottom: 10px; font-weight: 900; }
 
-        /* --- HUD NAVIGATION --- */
-        .hud-nav {
-            position: fixed; left: 30px; top: 50%; transform: translateY(-50%);
-            z-index: 1000; display: flex; flex-direction: column; gap: 15px;
-        }
-        .nav-dot {
-            width: 10px; height: 10px; border: 1px solid var(--text-dim);
-            transition: 0.3s; cursor: pointer;
-        }
-        .nav-dot:hover { background: var(--red); transform: scale(1.3) rotate(45deg); border-color: var(--red); }
-
-        /* --- CONTENT STYLES --- */
-        section { min-height: 100vh; width: 100vw; padding: 100px 12%; position: relative; border-bottom: 1px solid rgba(255,255,255,0.05); }
-        .section-tag { font-family: 'Syncopate', sans-serif; font-size: 0.7rem; color: var(--red); letter-spacing: 5px; margin-bottom: 10px; display: block; text-transform: uppercase; }
-        h2 { font-family: 'Syncopate', sans-serif; font-size: 3rem; margin-bottom: 30px; letter-spacing: -2px; }
-        p { line-height: 1.8; color: var(--text-dim); font-size: 1.05rem; margin-bottom: 20px; }
-
-        /* --- HERO --- */
-        #hero { text-align: center; }
-        .hero-title { font-size: 10vw; font-weight: 900; line-height: 0.8; margin-bottom: 20px; }
-
-        /* --- DATA TABLES --- */
-        .cast-table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 0.9rem; text-align: left; }
-        .cast-table th { color: var(--red); padding: 15px; border-bottom: 2px solid var(--gray); text-transform: uppercase; }
-        .cast-table td { padding: 15px; border-bottom: 1px solid var(--gray); }
-
-        /* --- STORY BLOCKS --- */
-        .story-container { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: start; }
-        .story-image { width: 100%; height: 400px; object-fit: cover; border: 1px solid var(--gray); filter: grayscale(1); transition: 0.5s; }
-        .story-image:hover { filter: grayscale(0); }
-        .dlc-box { margin-top: 20px; padding: 20px; background: rgba(226, 27, 34, 0.05); border-left: 2px solid var(--red); }
+        /* --- DLC SPECIAL SECTION --- */
+        .dlc-grid { margin-top: 40px; border-top: 1px solid #333; padding-top: 40px; }
+        .dlc-entry { margin-bottom: 40px; padding-left: 30px; border-left: 1px solid var(--blue); }
 
     </style>
 </head>
 <body>
 
     <div id="boot-screen">
-        <button class="boot-btn" onclick="initExperience()">INITIALIZE SAGA</button>
+        <h2 style="border:none; margin-bottom: 40px;">OSBORNE_CORE_V4.0</h2>
+        <button class="boot-btn" onclick="initExperience()">SYNC NEURAL LINK</button>
     </div>
 
     <div id="cursor"></div>
-    <canvas id="web-canvas"></canvas>
-
     <div id="player" style="display:none"></div>
 
     <div class="music-hud">
-        <div class="track-info" id="current-track">SYSTEM SILENT</div>
-        <button class="music-ctrl" id="music-toggle" onclick="toggleMusic()">PLAY</button>
-        <button class="music-ctrl" onclick="nextTrack()">NEXT</button>
+        <div id="track-name" style="font-size: 0.6rem; color: var(--blue); width: 120px;">SYSTEM READY</div>
+        <button class="music-btn" onclick="toggleMusic()">PLAY/PAUSE</button>
+        <button class="music-btn" onclick="nextTrack()">SKIP</button>
     </div>
 
-    <nav class="hud-nav">
-        <div class="nav-dot" title="Home" onclick="scrollToId('hero')"></div>
-        <div class="nav-dot" title="Saga" onclick="scrollToId('saga')"></div>
-        <div class="nav-dot" title="History" onclick="scrollToId('sm1')"></div>
-        <div class="nav-dot" title="Cast" onclick="scrollToId('cast')"></div>
-    </nav>
-
     <section id="hero">
-        <span class="section-tag">Neural Link Established</span>
-        <h1 class="hero-title">SPIDER<br>SAGA</h1>
-        <p style="letter-spacing: 15px; color: var(--blue);">BE GREATER. TOGETHER.</p>
+        <span class="section-tag">Archive Mainframe</span>
+        <h1>INSOMNIAC<br>SAGA</h1>
+        <p style="max-width: 600px;">A comprehensive data-log of Earth-1048. From the arrest of Wilson Fisk to the emergence of the Symbiote, this is the definitive history of the Spiders.</p>
     </section>
 
-    <section id="saga">
-        <span class="section-tag">Overview</span>
-        <h2>The Modern Era</h2>
-        <p>The "Spider-Man game saga" refers to the critically acclaimed Insomniac Games Universe (Earth-1048). While there are dozens of older games dating back to 1982, the current "Saga" is defined by its interconnected, cinematic narrative.</p>
-    </section>
-
-    <section id="sm1">
-        <span class="section-tag">History</span>
-        <div class="story-container">
+    <section id="game1">
+        <span class="section-tag">File 01: 2018</span>
+        <h2>Marvel's Spider-Man</h2>
+        <div class="game-analysis">
             <div>
-                <h2>Marvel's Spider-Man</h2>
-                <p>A 23-year-old Peter Parker, who has been Spider-Man for eight years, helps the police arrest Wilson Fisk. This creates a power vacuum filled by the "Inner Demons," led by Mister Negative.</p>
-                <p>Peter’s mentor, Dr. Otto Octavius, forms the Sinister Six. After the release of Devil's Breath, Peter makes the heartbreaking choice to save the city over his dying Aunt May.</p>
-                <div class="dlc-box">
-                    <p><strong>DLC: The City That Never Sleeps</strong><br>Features The Heist (Black Cat), Turf Wars (Hammerhead), and Silver Lining (Silver Sable).</p>
+                <p><strong>The Story:</strong> Peter Parker has been the wall-crawler for 8 years. He's experienced but exhausted. The story is a masterclass in duality—showing Peter's failing personal life against his success as a hero. The fall of Otto Octavius is tragic; he isn't just a villain, but a father figure who breaks Peter's heart.</p>
+                <div class="feature-list">
+                    <div class="feature-item"><strong>Visuals</strong>4K HDR recreation of NYC, featuring a living, breathing Manhattan with iconic landmarks.</div>
+                    <div class="feature-item"><strong>Gameplay</strong>Physics-based swinging that uses momentum and gravity to feel authentic.</div>
                 </div>
             </div>
-            <img src="https://media.rawg.io/media/games/cd3/cd3c9c7d3e95cb1608fd6289f0302b62.jpg" class="story-image">
+            <div class="dlc-entry">
+                <h3>The DLC: City That Never Sleeps</h3>
+                <p>This expansion feels like a gritty crime novel. It introduces <strong>Black Cat</strong>, adding a layer of romantic tension and deception. It also explores the militarization of NYC through Silver Sable and the terrifying transformation of Hammerhead into a cyborg mob boss.</p>
+            </div>
+        </div>
+
+        <h3>Character Dossiers (Game 1 & DLC)</h3>
+        <div class="dossier-grid">
+            <div class="dossier-card">
+                <span class="actor-tag">Yuri Lowenthal</span>
+                <h4>Peter Parker</h4>
+                <p>The veteran Spidey. He is agile, witty, but emotionally strained. His journey in the first game is about learning that he can't save everyone, culminating in the loss of Aunt May.</p>
+            </div>
+            <div class="dossier-card">
+                <span class="actor-tag">William Salyers</span>
+                <h4>Otto Octavius</h4>
+                <p>A brilliant scientist whose neurological decay and resentment toward Norman Osborn drive him to lead the Sinister Six. He is the saga's most personal antagonist.</p>
+            </div>
+            <div class="dossier-card">
+                <span class="actor-tag">Erica Lindbeck</span>
+                <h4>Black Cat</h4>
+                <p>A master thief and Peter's former flame. She plays a dangerous game of "catch me if you can," using Peter’s sense of responsibility against him in the DLC.</p>
+            </div>
+            <div class="dossier-card">
+                <span class="actor-tag">Stephen Oyoung</span>
+                <h4>Mister Negative</h4>
+                <p>Martin Li is a man split in two. A philanthropist by day and a vengeful criminal by night. His "Negative Energy" represents the corruption of grief.</p>
+            </div>
         </div>
     </section>
 
-    <section id="cast">
-        <span class="section-tag">Voice Talent</span>
-        <h2>Character Database</h2>
-        <table class="cast-table">
-            <thead>
-                <tr><th>Character</th><th>Voice Actor</th></tr>
-            </thead>
-            <tbody>
-                <tr><td>Peter Parker</td><td>Yuri Lowenthal</td></tr>
-                <tr><td>Miles Morales</td><td>Nadji Jeter</td></tr>
-                <tr><td>MJ Watson</td><td>Laura Bailey</td></tr>
-                <tr><td>Doctor Octopus</td><td>William Salyers</td></tr>
-                <tr><td>Venom</td><td>Tony Todd</td></tr>
-                <tr><td>Kraven</td><td>Jim Pirri</td></tr>
-                <tr><td>Black Cat</td><td>Erica Lindbeck</td></tr>
-                <tr><td>Wraith</td><td>Tara Platt</td></tr>
-            </tbody>
-        </table>
+    <section id="game2">
+        <span class="section-tag">File 02: 2020</span>
+        <h2>Spider-Man: Miles Morales</h2>
+        <div class="game-analysis">
+            <div>
+                <p><strong>The Story:</strong> A more intimate, focused tale. Set during Christmas in Harlem, Miles must find his own identity as a hero. It’s a story about community and the weight of secrets, as his best friend Phin becomes his greatest enemy.</p>
+                <div class="feature-list">
+                    <div class="feature-item"><strong>Visuals</strong>Ray-tracing on PS5 brings the snowy streets and neon lights of Harlem to life with incredible reflections.</div>
+                    <div class="feature-item"><strong>Gameplay</strong>Introduces "Venom Power" (bio-electricity) and Camouflage, adding stealth and explosive combat options.</div>
+                </div>
+            </div>
+            <div class="dossier-grid">
+                <div class="dossier-card">
+                    <span class="actor-tag">Nadji Jeter</span>
+                    <h4>Miles Morales</h4>
+                    <p>Young, earnest, and musically inclined. Miles struggles with the "Spider-Man" mantle, eventually realizing he doesn't need to be Peter—he needs to be himself.</p>
+                </div>
+                <div class="dossier-card">
+                    <span class="actor-tag">Jasmine Savoy Brown</span>
+                    <h4>Phin Mason</h4>
+                    <p>The Tinkerer. Driven by revenge against Roxxon for the death of her brother, she leads a high-tech army. Her tragedy is her inability to see past her anger.</p>
+                </div>
+                <div class="dossier-card">
+                    <span class="actor-tag">Ike Amadi</span>
+                    <h4>The Prowler</h4>
+                    <p>Aaron Davis, Miles' uncle. He walks a gray line between protecting his nephew and working for the highest bidder. He is Miles' cautionary tale.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="game3">
+        <span class="section-tag">File 03: 2023</span>
+        <h2>Marvel's Spider-Man 2</h2>
+        <p><strong>The Story:</strong> The scale explodes. Two playable Spiders, an expanded map including Queens and Brooklyn, and the arrival of Kraven. The narrative explores addiction and power through the Symbiote suit, which corrupts Peter before birthing the monstrous Venom.</p>
+        
+        <div class="dossier-grid">
+            <div class="dossier-card">
+                <span class="actor-tag">Tony Todd</span>
+                <h4>Venom</h4>
+                <p>A hulking, terrifying presence. Not just a monster, but a dark reflection of Peter and Harry's desire to "heal the world" through force.</p>
+            </div>
+            <div class="dossier-card">
+                <span class="actor-tag">Jim Pirri</span>
+                <h4>Kraven the Hunter</h4>
+                <p>A dying man looking for a warrior’s death. He treats NYC as his personal hunting ground, killing several villains from the first game to prove his dominance.</p>
+            </div>
+            <div class="dossier-card">
+                <span class="actor-tag">Graham Phillips</span>
+                <h4>Harry Osborn</h4>
+                <p>Peter’s best friend. His return is the emotional anchor of the game. His desperation to live leads him to bond with the Symbiote, with catastrophic results.</p>
+            </div>
+            <div class="dossier-card">
+                <span class="actor-tag">Mark Whitten</span>
+                <h4>Dr. Curt Connors</h4>
+                <p>The Lizard. A tragic scientist who Peter and Miles must save while he is in a feral, monstrous state. He provides key insights into the Symbiote's origin.</p>
+            </div>
+        </div>
     </section>
 
     <script src="https://www.youtube.com/iframe_api"></script>
     <script>
-        // --- MUSIC ENGINE ---
         let player;
         let currentTrackIndex = 0;
         const playlist = [
@@ -175,74 +213,38 @@
 
         function onYouTubeIframeAPIReady() {
             player = new YT.Player('player', {
-                height: '0', width: '0',
-                videoId: playlist[0].id,
-                playerVars: { 'autoplay': 0, 'controls': 0 },
-                events: { 'onStateChange': onPlayerStateChange }
+                height: '0', width: '0', videoId: playlist[0].id,
+                events: { 'onStateChange': (e) => { if(e.data == 0) nextTrack(); } }
             });
         }
 
-        function onPlayerStateChange(event) {
-            if (event.data == YT.PlayerState.ENDED) { nextTrack(); }
-        }
-
         function initExperience() {
-            document.getElementById('boot-screen').style.opacity = '0';
-            setTimeout(() => { document.getElementById('boot-screen').style.display = 'none'; }, 1000);
+            document.getElementById('boot-screen').style.display = 'none';
             player.playVideo();
-            updateMusicUI();
+            updateUI();
         }
 
         function toggleMusic() {
-            const state = player.getPlayerState();
-            if (state == 1) { 
-                player.pauseVideo();
-                document.getElementById('music-toggle').innerText = 'PLAY';
-            } else {
-                player.playVideo();
-                document.getElementById('music-toggle').innerText = 'PAUSE';
-            }
+            const s = player.getPlayerState();
+            s == 1 ? player.pauseVideo() : player.playVideo();
         }
 
         function nextTrack() {
             currentTrackIndex = (currentTrackIndex + 1) % playlist.length;
             player.loadVideoById(playlist[currentTrackIndex].id);
-            updateMusicUI();
+            updateUI();
         }
 
-        function updateMusicUI() {
-            document.getElementById('current-track').innerText = playlist[currentTrackIndex].title;
-            document.getElementById('music-toggle').innerText = 'PAUSE';
+        function updateUI() {
+            document.getElementById('track-name').innerText = playlist[currentTrackIndex].title;
         }
 
-        // --- VISUAL ENGINE ---
+        // --- MOUSE ENGINE ---
         const cursor = document.getElementById('cursor');
-        const canvas = document.getElementById('web-canvas');
-        const ctx = canvas.getContext('2d');
-        let mouse = { x: 0, y: 0 }, lastMouse = { x: 0, y: 0 };
-
-        canvas.width = window.innerWidth; canvas.height = window.innerHeight;
-
         window.addEventListener('mousemove', (e) => {
-            mouse.x = e.clientX; mouse.y = e.clientY;
-            cursor.style.left = mouse.x + 'px'; cursor.style.top = mouse.y + 'px';
+            cursor.style.left = e.clientX + 'px';
+            cursor.style.top = e.clientY + 'px';
         });
-
-        function animate() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.beginPath();
-            ctx.moveTo(lastMouse.x, lastMouse.y);
-            ctx.lineTo(mouse.x, mouse.y);
-            ctx.strokeStyle = 'rgba(255,255,255,0.15)';
-            ctx.lineWidth = 1;
-            ctx.stroke();
-            lastMouse.x += (mouse.x - lastMouse.x) * 0.1;
-            lastMouse.y += (mouse.y - lastMouse.y) * 0.1;
-            requestAnimationFrame(animate);
-        }
-        animate();
-
-        function scrollToId(id) { document.getElementById(id).scrollIntoView({ behavior: 'smooth' }); }
     </script>
 </body>
 </html>
