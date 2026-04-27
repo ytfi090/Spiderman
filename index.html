@@ -3,202 +3,286 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SPIDER-MAN: THE ULTIMATE EXPERIENCE</title>
+    <title>SPIDER-MAN: THE COMPLETE INSOMNIAC SAGA</title>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Syncopate:wght@700&family=Inter:wght@400;900&display=swap');
+
         :root {
-            --red: #ff0015; --blue: #001eff; --white: #f0f0f0; --black: #020205;
+            --red: #E21B22; --blue: #004694; --gold: #FFD700; --black: #050508;
+            --white: #ffffff; --glass: rgba(255, 255, 255, 0.05);
         }
 
-        /* --- THE GLITCH OVERLAY --- */
-        body::after {
-            content: ""; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            background: repeating-linear-gradient(0deg, rgba(0,0,0,0.1), rgba(0,0,0,0.1) 1px, transparent 1px, transparent 2px);
-            pointer-events: none; z-index: 9999; opacity: 0.3;
-        }
-
-        body {
-            background-color: var(--black); color: var(--white);
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            background-color: var(--black); color: var(--white); 
             font-family: 'Inter', sans-serif; overflow-x: hidden;
-            cursor: none; /* We are building a custom web-cursor */
+            cursor: none; scroll-behavior: smooth;
         }
 
-        /* --- THE WEB CURSOR --- */
+        /* --- UI OVERLAYS --- */
         #cursor {
-            position: fixed; width: 20px; height: 20px; background: var(--white);
+            position: fixed; width: 10px; height: 10px; background: var(--white);
             border-radius: 50%; pointer-events: none; z-index: 10000;
-            mix-blend-mode: difference; transition: transform 0.1s ease;
+            box-shadow: 0 0 15px var(--white); transition: transform 0.1s ease;
         }
-        #cursor-web {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            pointer-events: none; z-index: 9998;
+        #web-canvas { position: fixed; top: 0; left: 0; z-index: 9999; pointer-events: none; }
+        
+        .hud-nav {
+            position: fixed; right: 40px; top: 50%; transform: translateY(-50%);
+            z-index: 1000; display: flex; flex-direction: column; gap: 20px;
         }
+        .nav-item {
+            width: 12px; height: 12px; border: 1px solid var(--white);
+            border-radius: 2px; transition: 0.3s; cursor: pointer;
+        }
+        .nav-item:hover { background: var(--red); transform: scale(1.5) rotate(45deg); box-shadow: 0 0 10px var(--red); }
 
-        /* --- SECTIONS & 3D SPACE --- */
-        .container { perspective: 1200px; height: 100vh; overflow-y: auto; overflow-x: hidden; }
-
+        /* --- SECTIONS CORE --- */
         section {
-            position: relative; height: 100vh; display: flex; align-items: center;
-            justify-content: center; transform-style: preserve-3d;
-            transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+            min-height: 100vh; width: 100vw; padding: 100px 10%;
+            display: flex; flex-direction: column; justify-content: center;
+            position: relative; border-bottom: 1px solid rgba(255,255,255,0.05);
         }
 
-        /* --- SECTION 1: THE VOID HERO --- */
-        .hero-title {
-            font-size: clamp(4rem, 12vw, 15rem); font-weight: 900;
-            text-transform: uppercase; line-height: 0.8; text-align: center;
-            filter: drop-shadow(5px 5px var(--red)) drop-shadow(-5px -5px var(--blue));
-            animation: float 4s ease-in-out infinite;
+        h2.section-label {
+            font-family: 'Syncopate', sans-serif; font-size: 5rem;
+            color: transparent; -webkit-text-stroke: 1px rgba(255,255,255,0.2);
+            position: absolute; top: 50px; left: 5%; z-index: -1;
         }
 
-        @keyframes float { 0%, 100% { transform: translateY(0) rotateX(5deg); } 50% { transform: translateY(-20px) rotateX(-5deg); } }
-
-        /* --- THE SUIT LAB (GALLERY REINVENTED) --- */
-        .suit-lab {
-            display: flex; gap: 20px; width: 200%; animation: scroll-lab 30s linear infinite;
+        /* --- 1. HERO --- */
+        #hero { text-align: center; overflow: hidden; }
+        .glitch-title {
+            font-size: 12vw; font-weight: 900; line-height: 0.8;
+            text-transform: uppercase; background: linear-gradient(var(--white), #888);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            filter: drop-shadow(10px 0 var(--red)) drop-shadow(-10px 0 var(--blue));
         }
-        @keyframes scroll-lab { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
 
-        .suit-card {
-            width: 300px; height: 450px; background: #111; border: 1px solid var(--red);
-            flex-shrink: 0; transform: skewX(-5deg); overflow: hidden;
-            position: relative; transition: 0.5s;
+        /* --- 2. GAMES & DLC (3D GRID) --- */
+        .grid-3d {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px; perspective: 1000px;
         }
-        .suit-card:hover { transform: skewX(0deg) scale(1.1); z-index: 10; border-color: var(--blue); }
+        .card-3d {
+            height: 400px; background: var(--glass); border: 1px solid rgba(255,255,255,0.1);
+            position: relative; transform-style: preserve-3d; transition: 0.5s;
+            overflow: hidden;
+        }
+        .card-3d:hover { transform: translateZ(50px) rotateY(10deg); border-color: var(--red); }
+        .card-3d img { width: 100%; height: 100%; object-fit: cover; opacity: 0.5; transition: 0.5s; }
+        .card-3d:hover img { opacity: 1; transform: scale(1.1); }
+        .card-info { position: absolute; bottom: 20px; left: 20px; z-index: 2; }
 
-        .suit-card img { width: 100%; height: 100%; object-fit: cover; filter: grayscale(1); transition: 0.5s; }
-        .suit-card:hover img { filter: grayscale(0); }
+        /* --- 3. TIMELINE (VORTEX) --- */
+        .timeline-vortex { position: relative; max-width: 800px; margin: 0 auto; }
+        .tl-entry {
+            padding: 40px; margin: 20px 0; background: rgba(255,255,255,0.02);
+            border-left: 4px solid var(--blue); transition: 0.3s;
+        }
+        .tl-entry:hover { background: rgba(0, 70, 148, 0.1); transform: translateX(20px); border-color: var(--red); }
 
-        /* --- THE SENSE ALERT --- */
-        .sense-alert {
-            position: absolute; top: 20%; left: 50%; transform: translateX(-50%);
-            color: yellow; font-weight: bold; font-style: italic; opacity: 0;
-            animation: sense-flash 2s infinite; pointer-events: none;
+        /* --- 4. CHARACTERS --- */
+        .char-flex { display: flex; overflow-x: auto; gap: 40px; padding-bottom: 50px; scroll-snap-type: x mandatory; }
+        .char-box {
+            min-width: 400px; height: 500px; scroll-snap-align: center;
+            background: #111; position: relative; overflow: hidden;
         }
-        @keyframes sense-flash { 0%, 100% { opacity: 0; transform: scale(0.8) translateX(-50%); } 50% { opacity: 1; transform: scale(1.2) translateX(-50%); } }
+        .char-box img { width: 100%; height: 100%; object-fit: cover; filter: saturate(0); transition: 0.8s; }
+        .char-box:hover img { filter: saturate(1); transform: scale(1.05); }
+        .char-overlay {
+            position: absolute; bottom: 0; width: 100%; padding: 40px;
+            background: linear-gradient(transparent, var(--black));
+        }
 
-        /* --- SCROLL PROGRESS HUD --- */
-        .hud-line {
-            position: fixed; left: 50px; top: 50%; transform: translateY(-50%);
-            width: 2px; height: 200px; background: rgba(255,255,255,0.1);
+        /* --- 5. WHY PLAY --- */
+        .why-container { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
+        .reason { padding: 40px; border: 1px solid var(--glass); text-align: center; }
+        .reason i { font-size: 3rem; display: block; margin-bottom: 20px; color: var(--red); }
+
+        /* --- 6. GALLERY --- */
+        .gallery-vortex {
+            display: grid; grid-template-columns: repeat(4, 1fr); grid-auto-rows: 200px; gap: 10px;
         }
-        .hud-progress {
-            position: absolute; top: 0; left: 0; width: 100%;
-            background: var(--red); box-shadow: 0 0 10px var(--red);
-            transition: height 0.3s ease;
-        }
+        .gal-img { width: 100%; height: 100%; object-fit: cover; filter: brightness(0.5); transition: 0.3s; }
+        .gal-img:hover { filter: brightness(1); outline: 2px solid var(--white); }
+
+        /* --- UTILS --- */
+        .label { color: var(--red); font-weight: 900; letter-spacing: 3px; font-size: 0.8rem; margin-bottom: 10px; display: block;}
+        h3 { font-family: 'Syncopate', sans-serif; margin-bottom: 15px; }
+        p { color: #aaa; line-height: 1.6; }
+
     </style>
 </head>
 <body>
 
     <div id="cursor"></div>
-    <canvas id="cursor-web"></canvas>
+    <canvas id="web-canvas"></canvas>
 
-    <div class="hud-line"><div class="hud-progress" id="progress-bar"></div></div>
+    <nav class="hud-nav">
+        <div class="nav-item" onclick="document.getElementById('hero').scrollIntoView()"></div>
+        <div class="nav-item" onclick="document.getElementById('games').scrollIntoView()"></div>
+        <div class="nav-item" onclick="document.getElementById('timeline').scrollIntoView()"></div>
+        <div class="nav-item" onclick="document.getElementById('characters').scrollIntoView()"></div>
+        <div class="nav-item" onclick="document.getElementById('whyplay').scrollIntoView()"></div>
+        <div class="nav-item" onclick="document.getElementById('gallery').scrollIntoView()"></div>
+    </nav>
 
-    <div class="container" id="main-scroll">
-        
-        <section id="hero">
-            <h1 class="hero-title">BE<br>GREATER</h1>
-            <div class="sense-alert">/// SPIDER-SENSE TINGLING ///</div>
-        </section>
+    <section id="hero">
+        <span class="label">INSOMNIAC GAMES</span>
+        <h1 class="glitch-title">SPIDER<br>MAN</h1>
+        <p style="margin-top: 20px; letter-spacing: 5px;">BE GREATER. TOGETHER.</p>
+    </section>
 
-        <section id="suits">
-            <div class="suit-lab">
-                <div class="suit-card"><img src="https://gmedia.playstation.com/is/image/SIEPDC/marvels-spider-man-2-screenshot-02-en-01jun23?$native$"></div>
-                <div class="suit-card"><img src="https://gmedia.playstation.com/is/image/SIEPDC/marvels-spider-man-miles-morales-screenshot-02-discl-en-02oct20?$native$"></div>
-                <div class="suit-card"><img src="https://gmedia.playstation.com/is/image/SIEPDC/marvels-spider-man-screen-08-ps4-us-12jun18?$native$"></div>
-                <div class="suit-card"><img src="https://gmedia.playstation.com/is/image/SIEPDC/marvels-spider-man-2-screenshot-13-en-01jun23?$native$"></div>
-                <div class="suit-card"><img src="https://gmedia.playstation.com/is/image/SIEPDC/marvels-spider-man-2-screenshot-02-en-01jun23?$native$"></div>
-                <div class="suit-card"><img src="https://gmedia.playstation.com/is/image/SIEPDC/marvels-spider-man-miles-morales-screenshot-02-discl-en-02oct20?$native$"></div>
+    <section id="games">
+        <h2 class="section-label">PROJECTS</h2>
+        <div class="grid-3d">
+            <div class="card-3d">
+                <img src="https://media.rawg.io/media/games/cd3/cd3c9c7d3e95cb1608fd6289f0302b62.jpg">
+                <div class="card-info"><span class="label">2018</span><h3>Spider-Man</h3></div>
             </div>
-        </section>
-
-        <section id="vortex" style="background: radial-gradient(circle, #050510 0%, #000 100%);">
-            <div style="text-align: center;">
-                <h2 style="font-size: 5rem; letter-spacing: -2px;">THE MULTIVERSE</h2>
-                <p style="color: var(--blue); letter-spacing: 10px;">CHRONOLOGICAL ORDER</p>
-                <div style="margin-top: 50px; display: flex; flex-direction: column; gap: 20px;">
-                    <div class="tl-node">2018 | PETER PARKER</div>
-                    <div class="tl-node">2020 | MILES MORALES</div>
-                    <div class="tl-node">2023 | THE SYMBIOTE</div>
-                </div>
+            <div class="card-3d">
+                <img src="https://image.api.playstation.com/vulcan/img/rnd/202010/2621/7Cms9nN5W8YVq5V0Vb4o5U8D.png">
+                <div class="card-info"><span class="label">DLC</span><h3>The Heist</h3></div>
             </div>
-        </section>
+            <div class="card-3d">
+                <img src="https://media.rawg.io/media/games/03b/03b290740942e61f22144d9f6fd1bd0b.jpg">
+                <div class="card-info"><span class="label">2020</span><h3>Miles Morales</h3></div>
+            </div>
+            <div class="card-3d">
+                <img src="https://gmedia.playstation.com/is/image/SIEPDC/marvels-spider-man-2-logo-01-en-14sep21?$native$">
+                <div class="card-info"><span class="label">2023</span><h3>Spider-Man 2</h3></div>
+            </div>
+            <div class="card-3d">
+                <img src="https://image.api.playstation.com/vulcan/img/rnd/202010/2621/bVvRjLdYlG1Y2jC4f6wX7X5D.png">
+                <div class="card-info"><span class="label">DLC</span><h3>Turf Wars</h3></div>
+            </div>
+            <div class="card-3d">
+                <img src="https://image.api.playstation.com/vulcan/img/rnd/202010/2621/4a8Xf1L5v5gHjLdYlG1Y2jC4.png">
+                <div class="card-info"><span class="label">DLC</span><h3>Silver Lining</h3></div>
+            </div>
+        </div>
+    </section>
 
-    </div>
+    <section id="timeline">
+        <h2 class="section-label">HISTORY</h2>
+        <div class="timeline-vortex">
+            <div class="tl-entry">
+                <h3>01. The Devil's Breath</h3>
+                <p>Peter faces the fall of Otto Octavius and the rise of the Sinister Six in a desperate race to save New York from a bio-weapon.</p>
+            </div>
+            <div class="tl-entry">
+                <h3>02. The New Protector</h3>
+                <p>Miles Morales defends Harlem from the Roxxon Corporation and the Underground while Peter is away in Symkaria.</p>
+            </div>
+            <div class="tl-entry">
+                <h3>03. The Greater Threat</h3>
+                <p>Kraven the Hunter arrives in NYC, triggering the emergence of the Symbiote and the ultimate test for both Spiders.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="characters">
+        <h2 class="section-label">LEGENDS</h2>
+        <div class="char-flex">
+            <div class="char-box">
+                <img src="https://gmedia.playstation.com/is/image/SIEPDC/marvels-spider-man-screen-02-ps4-us-12jun18?$native$">
+                <div class="char-overlay"><h3>Peter Parker</h3><p>The veteran hero struggling to balance a normal life with Harry Osborn's return.</p></div>
+            </div>
+            <div class="char-box">
+                <img src="https://gmedia.playstation.com/is/image/SIEPDC/marvels-spider-man-miles-morales-screenshot-01-discl-en-02oct20?$native$">
+                <div class="char-overlay"><h3>Miles Morales</h3><p>Evolved with bio-electric powers, Miles is now a beacon of hope for Harlem.</p></div>
+            </div>
+            <div class="char-box">
+                <img src="https://gmedia.playstation.com/is/image/SIEPDC/marvels-spider-man-2-screenshot-13-en-01jun23?$native$">
+                <div class="char-overlay"><h3>Venom</h3><p>The ultimate nightmare. A symbiote bond that threatens to consume the city.</p></div>
+            </div>
+        </div>
+    </section>
+
+    <section id="whyplay">
+        <h2 class="section-label">CORE</h2>
+        <div class="why-container">
+            <div class="reason"><h3>Traversal</h3><p>Physics-based swinging that defines the superhero genre.</p></div>
+            <div class="reason"><h3>Narrative</h3><p>High-stakes emotional storytelling where the mask always has a cost.</p></div>
+            <div class="reason"><h3>Visuals</h3><p>A stunning, living recreation of Marvel's Manhattan.</p></div>
+        </div>
+    </section>
+
+    <section id="gallery">
+        <h2 class="section-label">VISUALS</h2>
+        <div class="gallery-vortex">
+            <img src="https://gmedia.playstation.com/is/image/SIEPDC/marvels-spider-man-2-screenshot-02-en-01jun23?$native$" class="gal-img">
+            <img src="https://gmedia.playstation.com/is/image/SIEPDC/marvels-spider-man-miles-morales-screenshot-02-discl-en-02oct20?$native$" class="gal-img">
+            <img src="https://gmedia.playstation.com/is/image/SIEPDC/marvels-spider-man-screen-08-ps4-us-12jun18?$native$" class="gal-img">
+            <img src="https://gmedia.playstation.com/is/image/SIEPDC/marvels-spider-man-2-screenshot-10-en-01jun23?$native$" class="gal-img">
+        </div>
+    </section>
 
     <script>
         const cursor = document.getElementById('cursor');
-        const canvas = document.getElementById('cursor-web');
+        const canvas = document.getElementById('web-canvas');
         const ctx = canvas.getContext('2d');
-        const scroller = document.getElementById('main-scroll');
-        const progressBar = document.getElementById('progress-bar');
+        let mouse = { x: 0, y: 0 };
+        let lastMouse = { x: 0, y: 0 };
 
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
 
-        let mouse = { x: 0, y: 0 };
-        let lastMouse = { x: 0, y: 0 };
-
-        // 1. CUSTOM CURSOR & WEB TRAIL
         window.addEventListener('mousemove', (e) => {
             mouse.x = e.clientX;
             mouse.y = e.clientY;
-            cursor.style.transform = `translate(${mouse.x - 10}px, ${mouse.y - 10}px)`;
+            cursor.style.left = mouse.x + 'px';
+            cursor.style.top = mouse.y + 'px';
         });
 
-        function drawWeb() {
-            ctx.clearRect(0,0, canvas.width, canvas.height);
+        // Web Trail Effect
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
             ctx.beginPath();
             ctx.moveTo(lastMouse.x, lastMouse.y);
             ctx.lineTo(mouse.x, mouse.y);
-            ctx.strokeStyle = 'rgba(255, 255, 255, 0.2)';
-            ctx.lineWidth = 1;
+            ctx.strokeStyle = 'rgba(255,255,255,0.1)';
+            ctx.lineWidth = 2;
             ctx.stroke();
 
-            // Ease the "tail" of the web
-            lastMouse.x += (mouse.x - lastMouse.x) * 0.1;
-            lastMouse.y += (mouse.y - lastMouse.y) * 0.1;
+            // Pull the tail toward the current mouse position
+            lastMouse.x += (mouse.x - lastMouse.x) * 0.08;
+            lastMouse.y += (mouse.y - lastMouse.y) * 0.08;
 
-            requestAnimationFrame(drawWeb);
+            requestAnimationFrame(animate);
         }
-        drawWeb();
+        animate();
 
-        // 2. SCROLL PROGRESS & 3D TILT
-        scroller.addEventListener('scroll', () => {
-            const scrolled = scroller.scrollTop;
-            const max = scroller.scrollHeight - scroller.clientHeight;
-            const percent = (scrolled / max) * 100;
-            progressBar.style.height = percent + '%';
-
-            // Apply a slight tilt to all sections based on scroll speed
-            const sections = document.querySelectorAll('section');
-            sections.forEach(s => {
-                const speed = 0.05;
-                s.style.transform = `rotateX(${(scrolled * speed) % 10}deg)`;
+        // 3D Card tilt logic
+        const cards = document.querySelectorAll('.card-3d');
+        cards.forEach(card => {
+            card.addEventListener('mousemove', (e) => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left - rect.width/2;
+                const y = e.clientY - rect.top - rect.height/2;
+                card.style.transform = `rotateY(${x/10}deg) rotateX(${-y/10}deg) translateZ(20px)`;
+            });
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = `rotateY(0deg) rotateX(0deg) translateZ(0px)`;
             });
         });
 
-        // 3. SOUND EFFECT (Mechanical Keyboard Style)
+        // Mechanical Click Sound (Web API)
         window.addEventListener('mousedown', () => {
-            // This replicates the "friendly but mechanical" feel you mentioned
-            cursor.style.transform += ' scale(0.5)';
-            const audio = new AudioContext();
-            const osc = audio.createOscillator();
-            const gain = audio.createGain();
+            const context = new AudioContext();
+            const osc = context.createOscillator();
+            const gain = context.createGain();
+            osc.type = 'square';
+            osc.frequency.setValueAtTime(100, context.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.00001, context.currentTime + 0.1);
             osc.connect(gain);
-            gain.connect(audio.destination);
-            osc.type = 'sine';
-            osc.frequency.setValueAtTime(150, audio.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.0001, audio.currentTime + 0.1);
+            gain.connect(context.destination);
             osc.start();
-            osc.stop(audio.currentTime + 0.1);
+            osc.stop(context.currentTime + 0.1);
+            cursor.style.transform = 'scale(2)';
         });
-
-        window.addEventListener('mouseup', () => {
-            cursor.style.transform = cursor.style.transform.replace(' scale(0.5)', '');
-        });
-
+        window.addEventListener('mouseup', () => cursor.style.transform = 'scale(1)');
     </script>
 </body>
 </html>
