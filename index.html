@@ -3,680 +3,215 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SPIDER-MAN: THE OMNI-OVERBOARD ARCHIVE | V8.0 — THE BRUTALIST ENGINE</title>
-    <link href="https://fonts.googleapis.com/css2?family=Syncopate:wght@700&family=Inter:wght@300;400;600;900&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+    <title>SM-1048 | V10.0 KINETIC OVERLOAD</title>
+    <link href="https://fonts.googleapis.com/css2?family=Syncopate:wght@700&family=JetBrains+Mono:wght@200;400;800&family=Inter:wght@900&display=swap" rel="stylesheet">
     <style>
-        /* --- CORE ARCHITECTURE --- */
         :root {
-            --red: #E21B22; --blue: #004694; --white: #FFFFFF;
-            --black: #010103; --gray-1: #08080a; --gray-2: #121216;
-            --accent: #ff003c; --glass: rgba(255, 255, 255, 0.03);
-            --transition: all 0.5s cubic-bezier(0.19, 1, 0.22, 1);
-            --glitch-offset: 3px;
+            --r: #FF0022; --b: #0055FF; --k: #030305; --w: #FFFFFF;
+            --font-hdr: 'Syncopate', sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; scroll-behavior: smooth; }
-        ::-webkit-scrollbar { width: 4px; }
-        ::-webkit-scrollbar-thumb { background: var(--red); border-radius: 10px; }
-        
+        /* --- THE KINETIC ENGINE --- */
+        * { margin: 0; padding: 0; box-sizing: border-box; cursor: none !important; }
         body { 
-            background: var(--black); color: var(--white); 
-            font-family: 'Inter', sans-serif; overflow-x: hidden; cursor: none;
-            position: relative;
+            background: var(--k); color: var(--w); font-family: 'Inter', sans-serif;
+            overflow-y: hidden; overflow-x: auto; white-space: nowrap;
         }
 
-        /* --- NEURAL CANVAS (PARTICLE SYSTEM) --- */
-        canvas#neural-bg {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            z-index: -1; opacity: 0.15;
+        /* Webbing SVG Background */
+        #web-overlay {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            z-index: -1; pointer-events: none; opacity: 0.2;
         }
 
-        /* --- TERMINAL BOOT SEQUENCE --- */
-        #boot-wrap {
-            position: fixed; inset: 0; background: var(--black); z-index: 100000;
-            padding: 50px; font-family: 'JetBrains Mono', monospace; display: flex;
-            flex-direction: column; justify-content: flex-end;
+        /* --- MOUSE HUD --- */
+        #c { position: fixed; width: 4px; height: 4px; background: #fff; z-index: 100001; pointer-events: none; }
+        #cr { 
+            position: fixed; width: 50px; height: 50px; border: 1px solid var(--r); 
+            z-index: 100000; pointer-events: none; transition: 0.1s;
         }
-        .term-log { font-size: 0.8rem; color: var(--blue); margin-bottom: 5px; opacity: 0.7; animation: fadeIn 0.4s ease-out; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 0.7; } }
-        #start-btn {
-            display: none; width: 250px; padding: 15px; background: none; 
-            border: 1px solid var(--red); color: white; cursor: pointer;
-            font-family: 'Syncopate'; letter-spacing: 5px; margin-top: 30px;
-            transition: all 0.3s ease; text-transform: uppercase;
+
+        /* --- HORIZONTAL SECTIONS --- */
+        section {
+            display: inline-block; width: 100vw; height: 100vh;
+            vertical-align: top; padding: 10% 5%; white-space: normal;
+            position: relative; border-right: 1px solid rgba(255,255,255,0.05);
         }
-        #start-btn:hover { background: var(--red); color: var(--black); }
 
-        /* --- NAVIGATION HUD --- */
-        #cursor { position: fixed; width: 6px; height: 6px; background: #fff; border-radius: 50%; pointer-events: none; z-index: 100001; mix-blend-mode: difference; }
-        #cursor-ring { position: fixed; width: 30px; height: 30px; border: 1px solid var(--red); border-radius: 50%; pointer-events: none; z-index: 100000; transition: 0.15s ease-out; }
+        .tag { font-family: var(--font-hdr); font-size: 0.6rem; color: var(--r); letter-spacing: 12px; margin-bottom: 20px; display: block; }
+        
+        h1 { 
+            font-size: 18vw; line-height: 0.75; letter-spacing: -12px; text-transform: uppercase;
+            color: transparent; -webkit-text-stroke: 2px var(--w);
+            transition: 0.5s;
+        }
+        h1:hover { color: var(--w); -webkit-text-stroke: 0px; }
 
+        /* --- DATA MATRIX: THE 3 DLCs --- */
+        .dlc-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 50px; }
+        .dlc-card {
+            background: rgba(255,255,255,0.02); border: 1px solid #111; padding: 60px 40px;
+            transition: 0.4s; clip-path: polygon(0 0, 100% 0, 100% 90%, 90% 100%, 0 100%);
+        }
+        .dlc-card:hover { background: #080810; border-color: var(--b); transform: translateY(-10px); }
+        .dlc-card h3 { font-family: var(--font-hdr); font-size: 1rem; color: var(--r); margin-bottom: 20px; }
+        .dlc-card p { font-size: 0.8rem; color: #666; line-height: 1.8; }
+        .stat-line { font-family: var(--font-mono); font-size: 0.6rem; color: var(--b); margin-top: 30px; display: block; }
+
+        /* --- PERSONNEL SCROLL --- */
+        .person-strip { display: flex; gap: 50px; margin-top: 100px; }
+        .person-box { 
+            min-width: 300px; padding: 40px; background: #050508; border-left: 1px solid var(--r);
+            transition: 0.3s;
+        }
+        .person-box:hover { background: var(--r); color: #000; }
+        .person-box h4 { font-family: var(--font-hdr); font-size: 0.8rem; }
+        .person-box .actor { font-family: var(--font-mono); font-size: 0.6rem; opacity: 0.6; }
+
+        /* --- SYSTEM HUD --- */
         nav {
-            position: fixed; top: 0; width: 100%; height: 80px; padding: 0 5%;
-            display: flex; align-items: center; justify-content: space-between;
-            z-index: 5000; background: rgba(1,1,3,0.9); backdrop-filter: blur(20px);
-            border-bottom: 1px solid var(--glass);
+            position: fixed; top: 0; left: 0; width: 100%; height: 80px;
+            padding: 0 5%; display: flex; align-items: center; justify-content: space-between;
+            z-index: 5000; background: linear-gradient(to bottom, var(--k), transparent);
         }
-        .logo { font-family: 'Syncopate'; font-size: 1.1rem; letter-spacing: 2px; }
-        .logo span { color: var(--red); }
-        
-        .music-bar { display: flex; align-items: center; gap: 20px; background: var(--gray-1); padding: 8px 15px; border: 1px solid #222; }
-        .track-info { font-size: 0.65rem; font-family: 'JetBrains Mono'; color: var(--blue); width: 200px; text-transform: uppercase; letter-spacing: 1px; }
-        .hud-btn { background: none; border: none; color: white; cursor: pointer; font-family: 'Syncopate'; font-size: 0.6rem; text-transform: uppercase; letter-spacing: 2px; transition: 0.2s; }
-        .hud-btn:hover { color: var(--red); }
-
-        /* --- SECTION STYLES --- */
-        section { min-height: 100vh; padding: 150px 10%; position: relative; z-index: 10; }
-        .tag { color: var(--red); font-family: 'Syncopate'; font-size: 0.65rem; letter-spacing: 6px; margin-bottom: 20px; display: block; text-transform: uppercase; }
-        
-        /* --- GLITCH TEXT EFFECT --- */
-        h1 {
-            font-family: 'Syncopate'; font-size: 9vw; line-height: 0.85; margin-bottom: 50px;
-            position: relative; cursor: pointer;
-            transition: text-shadow 0.3s ease;
-        }
-        h1:hover {
-            animation: glitchText 0.3s ease-out;
-            text-shadow: 
-                var(--glitch-offset) 0 0 rgba(226, 27, 34, 0.8),
-                calc(var(--glitch-offset) * -1) 0 0 rgba(0, 70, 148, 0.8);
-        }
-        @keyframes glitchText {
-            0%, 100% { transform: translate(0); }
-            20% { transform: translate(calc(var(--glitch-offset) * -1), var(--glitch-offset)); }
-            40% { transform: translate(var(--glitch-offset), calc(var(--glitch-offset) * -1)); }
-            60% { transform: translate(calc(var(--glitch-offset) * -1), calc(var(--glitch-offset) * -1)); }
-            80% { transform: translate(var(--glitch-offset), var(--glitch-offset)); }
+        .hud-unit {
+            background: rgba(0,0,0,0.8); border: 1px solid #222;
+            padding: 10px 20px; font-family: var(--font-mono); font-size: 0.65rem;
+            display: flex; gap: 20px; color: var(--b);
         }
 
-        h2 { font-family: 'Syncopate'; font-size: 3rem; margin-bottom: 30px; }
-        h3 { font-family: 'Syncopate'; font-size: 1.2rem; color: var(--blue); margin: 40px 0 20px; text-transform: uppercase; }
-        p { color: #888; line-height: 1.8; font-size: 1rem; margin-bottom: 25px; max-width: 900px; font-weight: 300; }
-
-        /* --- CHARACTER GRID --- */
-        .grid-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 30px; margin-top: 50px; }
-        .char-card {
-            background: var(--gray-1); border: 1px solid #1a1a1e; padding: 40px;
-            transition: var(--transition); position: relative;
-            overflow: hidden;
+        /* --- LOADER --- */
+        #loader {
+            position: fixed; inset: 0; background: #000; z-index: 100000;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
         }
-        .char-card::before {
-            content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
-            background: linear-gradient(135deg, var(--blue) 0%, var(--red) 100%);
-            opacity: 0; transition: opacity 0.5s;
-        }
-        .char-card:hover { 
-            transform: translateY(-15px); border-color: var(--blue); background: #0c0c12;
-        }
-        .char-card:hover::before { opacity: 0.05; }
-        .char-card h4 { font-family: 'Syncopate'; font-size: 0.9rem; margin-bottom: 10px; position: relative; z-index: 1; }
-        .char-card .actor-name { font-size: 0.65rem; color: var(--red); font-family: 'JetBrains Mono'; display: block; margin-bottom: 15px; position: relative; z-index: 1; }
-        .char-card .bio { position: relative; z-index: 1; }
-
-        /* --- TECHNICAL DATA TABLES --- */
-        .data-table { width: 100%; border-collapse: collapse; margin-top: 50px; font-size: 0.85rem; }
-        .data-table th { text-align: left; padding: 20px; border-bottom: 2px solid var(--blue); color: var(--blue); font-family: 'Syncopate'; text-transform: uppercase; }
-        .data-table td { padding: 20px; border-bottom: 1px solid #111; vertical-align: top; }
-        .data-table tr:hover { background: rgba(226, 27, 34, 0.05); }
-
-        /* --- DLC EXPANSION MODULES --- */
-        .dlc-module { background: #050507; border: 1px solid #1a1a1e; padding: 60px; margin-bottom: 40px; position: relative; }
-        .dlc-module::before {
-            content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 4px;
-            background: linear-gradient(to bottom, var(--red), var(--blue));
-        }
-        .dlc-tag { font-family: 'Syncopate'; color: var(--red); font-size: 0.7rem; margin-bottom: 20px; display: block; text-transform: uppercase; }
-        .dlc-metrics {
-            display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-top: 40px;
-        }
-        .metric-card {
-            background: rgba(255,255,255, 0.02); border: 1px solid #222; padding: 20px;
-            font-family: 'JetBrains Mono'; font-size: 0.85rem;
-        }
-        .metric-label { color: var(--blue); text-transform: uppercase; font-size: 0.65rem; margin-bottom: 10px; }
-        .metric-value { color: var(--red); font-size: 1.5rem; font-weight: 600; }
-
-        /* --- ENGINE COMPARISON TABLE --- */
-        .engine-table {
-            width: 100%; border-collapse: collapse; margin-top: 40px;
-            background: rgba(0, 70, 148, 0.05);
-        }
-        .engine-table th, .engine-table td {
-            border: 1px solid #222; padding: 25px; text-align: left;
-        }
-        .engine-table th {
-            background: rgba(226, 27, 34, 0.1); color: var(--red); font-family: 'Syncopate'; text-transform: uppercase;
-        }
-        .engine-table .spec-name { color: var(--blue); font-weight: 600; }
-
-        /* --- FOOTER SECTION --- */
-        footer {
-            padding: 100px 10%; background: rgba(1,1,3, 0.95); text-align: center;
-            border-top: 1px solid var(--glass); min-height: 50vh;
-            display: flex; flex-direction: column; justify-content: center;
-        }
-        .footer-info { font-size: 0.9rem; color: #555; margin-bottom: 30px; }
-        .footer-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 40px; margin-top: 60px; }
-        .footer-item { text-align: left; }
-        .footer-item h4 { color: var(--red); margin-bottom: 15px; font-family: 'Syncopate'; }
-        .footer-item p { font-size: 0.85rem; }
-
-        /* --- RESPONSIVE --- */
-        @media (max-width: 768px) {
-            h1 { font-size: 6vw; }
-            h2 { font-size: 2rem; }
-            section { padding: 100px 5%; }
-            .data-table { font-size: 0.7rem; }
-            .data-table th, .data-table td { padding: 12px; }
-        }
+        #boot-txt { font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 5px; color: var(--r); }
 
     </style>
 </head>
 <body>
 
-    <canvas id="neural-bg"></canvas>
-
-    <div id="boot-wrap">
-        <div id="term"></div>
-        <button id="start-btn" onclick="initialize()">SYNC NEURAL CANVAS</button>
+    <div id="loader">
+        <div id="boot-txt">DECRYPTING_NEURAL_LINK...</div>
     </div>
 
-    <div id="cursor"></div>
-    <div id="cursor-ring"></div>
-    <div id="player-api" style="display:none"></div>
+    <svg id="web-overlay">
+        <line id="web-line" x1="0" y1="0" x2="0" y2="0" stroke="#FF0022" stroke-width="0.5" />
+    </svg>
+
+    <div id="c"></div><div id="cr"></div>
+    <div id="yt" style="display:none"></div>
 
     <nav>
-        <div class="logo">BE_<span>GREATER</span></div>
-        <div class="music-bar">
-            <div class="track-info" id="current-track">SYSTEM OFFLINE</div>
-            <button class="hud-btn" onclick="toggleAudio()">▶ PLAY/PAUSE</button>
-            <button class="hud-btn" onclick="skipAudio()">⏭ NEXT</button>
-            <span style="font-size: 0.55rem; color: #555;">V8.0 AUDIO OS</span>
+        <div style="font-family: var(--font-hdr); font-size: 0.8rem; letter-spacing: 4px;">SYSTEM_<span>V10</span></div>
+        <div class="hud-unit">
+            <div id="tn">LOADING_AUDIO...</div>
+            <div onclick="play()" style="cursor:pointer">[PLAY]</div>
+            <div onclick="skip()" style="cursor:pointer">[SKIP]</div>
         </div>
     </nav>
 
-    <section id="hero">
-        <span class="tag">Earth-1048 Interface</span>
-        <h1>THE<br><span style="color:var(--red);">COMPLETE</span><br>SAGA</h1>
-        <p>A hyper-dense digital record documenting every mission, character, suit, and DLC expansion from the Insomniac Spider-Man Universe. This is the definitive archive—decrypting history from the Raft breakout to the Symbiote infection, spanning 2018 to 2023 across three generations of hardware. Every plot thread, every voice actor, every particle effect. Every frame of the story.</p>
-        <p style="margin-top: 40px; color: var(--blue); font-family: 'JetBrains Mono'; font-size: 0.9rem;">STATUS: OPERATIONAL // SECTORS: 6 // RECORDS: 200+ // COMPATIBILITY: PS4/PS5 // BANDWIDTH: NEURAL CANVAS ACTIVE</p>
-    </section>
+    <main id="container">
+        <section>
+            <span class="tag">Sector_01 // Core</span>
+            <h1>BE<br>GREATER</h1>
+            <p style="max-width: 500px; color: #444; font-size: 1rem; margin-top: 40px;">
+                V10.0 Kinetic Interface. Documenting the Earth-1048 Trilogy and the 3 DLC expansion modules. Scroll horizontally to decrypt.
+            </p>
+        </section>
 
-    <section id="games">
-        <span class="tag">Core Database</span>
-        <h2>The Software Legacy</h2>
-        <p>A technical evolution across three generations: the PS4 foundation, the PS5 leap, and the dual-narrative masterpiece. Each entry represents a quantum leap in game design, narrative ambition, and technical performance.</p>
-        
-        <div class="dlc-module">
-            <span class="dlc-tag">Entry 01 | Release 2018 | PlayStation 4</span>
-            <h3>Marvel's Spider-Man</h3>
-            <p>The foundation of Earth-1048. Peter Parker, 23 years old and a lab assistant for the brilliant Otto Octavius, is thrust into action when Wilson Fisk's arrest triggers an unprecedented gang war across New York City. The Sinister Six emerges, forcing Peter to balance his personal struggles with world-saving responsibility. A masterclass in open-world design and superhero storytelling.</p>
-            <div class="dlc-metrics">
-                <div class="metric-card">
-                    <div class="metric-label">Engine Type</div>
-                    <div class="metric-value">Proprietary</div>
+        <section>
+            <span class="tag">Sector_02 // Expansions</span>
+            <h2 style="font-family: var(--font-hdr); font-size: 3rem;">THE_TRIAD_DLC</h2>
+            <div class="dlc-grid">
+                <div class="dlc-card">
+                    <h3>01_THE_HEIST</h3>
+                    <p>Felicia Hardy (Black Cat) manipulates Peter's history to steal Maggia data drives. The introduction of Hammerhead's threat.</p>
+                    <span class="stat-line">UNLOCKS: SCARLET_SPIDER_II // RESILIENT</span>
                 </div>
-                <div class="metric-card">
-                    <div class="metric-label">Resolution</div>
-                    <div class="metric-value">1080p / 30fps</div>
+                <div class="dlc-card">
+                    <h3>02_TURF_WARS</h3>
+                    <p>Maggia family warfare. Hammerhead utilizes stolen Sable International tech. The origin of Wraith (Yuri Watanabe).</p>
+                    <span class="stat-line">UNLOCKS: IRON_SPIDER // SPIDER_ARMOR_MKI</span>
                 </div>
-                <div class="metric-card">
-                    <div class="metric-label">Load Times</div>
-                    <div class="metric-value">~30 seconds</div>
-                </div>
-                <div class="metric-card">
-                    <div class="metric-label">Map Size</div>
-                    <div class="metric-value">Manhattan (115 km²)</div>
+                <div class="dlc-card">
+                    <h3>03_SILVER_LINING</h3>
+                    <p>Silver Sable returns to reclaim her arsenal. A temporary alliance to end the Cyborg Hammerhead crisis.</p>
+                    <span class="stat-line">UNLOCKS: AARON_AIKMAN // SPIDER-VERSE</span>
                 </div>
             </div>
-        </div>
+        </section>
 
-        <div class="dlc-module">
-            <span class="dlc-tag">Entry 02 | Release 2020 | PlayStation 5</span>
-            <h3>Marvel's Spider-Man: Miles Morales</h3>
-            <p>A winter-set exploration of Harlem during a conflict between Roxxon Energy and the Tinkerer (Phin Mason). Miles Morales, a 16-year-old with bio-electric powers, must protect New York alone while Peter is in Symkaria. The story is a coming-of-age narrative wrapped in spectacular action. Miles discovers his place in the Spider-Man legacy while the city burns around him. A showcase for PS5 capabilities: ray-traced reflections, instant SSD loading, 60fps immersion.</p>
-            <div class="dlc-metrics">
-                <div class="metric-card">
-                    <div class="metric-label">Engine Type</div>
-                    <div class="metric-value">Proprietary v2</div>
-                </div>
-                <div class="metric-card">
-                    <div class="metric-label">Resolution</div>
-                    <div class="metric-value">1440p / 60fps</div>
-                </div>
-                <div class="metric-card">
-                    <div class="metric-label">Load Times</div>
-                    <div class="metric-value">~0.8 seconds</div>
-                </div>
-                <div class="metric-card">
-                    <div class="metric-label">Ray Tracing</div>
-                    <div class="metric-value">Full Implementation</div>
-                </div>
+        <section>
+            <span class="tag">Sector_03 // Personnel</span>
+            <h2 style="font-family: var(--font-hdr); font-size: 3rem;">SUBJECT_DOSSIER</h2>
+            <div class="person-strip">
+                <div class="person-box"><span class="actor">Yuri Lowenthal</span><h4>PETER PARKER</h4></div>
+                <div class="person-box"><span class="actor">Nadji Jeter</span><h4>MILES MORALES</h4></div>
+                <div class="person-box"><span class="actor">Tony Todd</span><h4>VENOM</h4></div>
+                <div class="person-box"><span class="actor">Jim Pirri</span><h4>KRAVEN</h4></div>
+                <div class="person-box"><span class="actor">Erica Lindbeck</span><h4>BLACK CAT</h4></div>
+                <div class="person-box"><span class="actor">William Salyers</span><h4>DOC OCK</h4></div>
             </div>
-        </div>
+        </section>
 
-        <div class="dlc-module">
-            <span class="dlc-tag">Entry 03 | Release 2023 | PlayStation 5</span>
-            <h3>Marvel's Spider-Man 2</h3>
-            <p>The pinnacle. Dual protagonists—Peter Parker and Miles Morales—face Kraven the Hunter and the arrival of the Symbiote. The map doubles in size, now encompassing Manhattan, Brooklyn, and Queens in a living, breathing megacity. The narrative explores themes of corruption, responsibility, and redemption. Peter discovers the Symbiote suit, leading to his transformation into the feared Venom. Miles must choose between revenge and justice. A technical masterpiece: 3x faster asset streaming, instant character switching via SSD streaming, and environmental destruction on a scale never before seen in Spider-Man games.</p>
-            <div class="dlc-metrics">
-                <div class="metric-card">
-                    <div class="metric-label">Engine Type</div>
-                    <div class="metric-value">Proprietary v3</div>
-                </div>
-                <div class="metric-card">
-                    <div class="metric-label">Resolution</div>
-                    <div class="metric-value">1440p / 60fps</div>
-                </div>
-                <div class="metric-card">
-                    <div class="metric-label">Load Times</div>
-                    <div class="metric-value">~0.3 seconds</div>
-                </div>
-                <div class="metric-card">
-                    <div class="metric-label">Map Scale</div>
-                    <div class="metric-value">220+ km² (Tri-Borough)</div>
-                </div>
+        <section>
+            <span class="tag">Sector_04 // Hardware</span>
+            <h2 style="font-family: var(--font-hdr); font-size: 3rem;">ENGINE_LOGS</h2>
+            <div style="margin-top: 50px; border: 1px solid #111; padding: 40px; font-family: var(--font-mono); font-size: 0.8rem; color: #555;">
+                >> CPU_LOAD: STABLE<br>
+                >> SSD_STREAMING: 0.3s (SM2)<br>
+                >> RESOLUTION: 4K_DYNAMIC<br>
+                >> RAY_TRACING: ACTIVE_FULL<br>
+                >> TRAVERSAL: 3x_WEB_WINGS
             </div>
-        </div>
-
-        <!-- Engine Comparison -->
-        <h3 style="margin-top: 80px;">Evolutionary Technical Matrix</h3>
-        <table class="engine-table">
-            <thead>
-                <tr>
-                    <th>Specification</th>
-                    <th>SM1 (2018)</th>
-                    <th>Miles Morales (2020)</th>
-                    <th>SM2 (2023)</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td class="spec-name">Target Resolution</td>
-                    <td>1080p / 30fps</td>
-                    <td>1440p / 60fps</td>
-                    <td>1440p / 60fps (Quality)</td>
-                </tr>
-                <tr>
-                    <td class="spec-name">SSD Load Time (avg)</td>
-                    <td>~30 seconds</td>
-                    <td>~0.8 seconds</td>
-                    <td>~0.3 seconds</td>
-                </tr>
-                <tr>
-                    <td class="spec-name">Ray Tracing</td>
-                    <td>None</td>
-                    <td>Full (Reflections/Ambient)</td>
-                    <td>Full (Advanced)</td>
-                </tr>
-                <tr>
-                    <td class="spec-name">Traversal Speed</td>
-                    <td>Standard</td>
-                    <td>1.2x faster</td>
-                    <td>3x faster (Web Wings)</td>
-                </tr>
-                <tr>
-                    <td class="spec-name">NPC Count (viewport)</td>
-                    <td>~200</td>
-                    <td>~400</td>
-                    <td>~600+</td>
-                </tr>
-                <tr>
-                    <td class="spec-name">Destructible Environment</td>
-                    <td>Limited</td>
-                    <td>Moderate</td>
-                    <td>Extensive</td>
-                </tr>
-            </tbody>
-        </table>
-    </section>
-
-    <section id="dlc">
-        <span class="tag">Expansion Database</span>
-        <h2>The City That Never Sleeps: DLC Trilogy</h2>
-        <p>A detailed breakdown of the three-part post-game expansion (2019) that serves as a bridge narrative between Spider-Man (2018) and Miles Morales. Each chapter shifts perspective, introduces new threats, and deepens the lore of Earth-1048.</p>
-
-        <!-- DLC Deep Scan -->
-        <h3>Triple DLC Deep-Scan Matrix</h3>
-        
-        <div style="margin-top: 40px;">
-            <table class="data-table">
-                <thead>
-                    <tr>
-                        <th>Chapter</th>
-                        <th>Release Date</th>
-                        <th>Narrative Arc</th>
-                        <th>Key Characters</th>
-                        <th>Main Missions</th>
-                        <th>Side Missions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td><strong>The Heist</strong></td>
-                        <td>October 2018</td>
-                        <td>Felicia Hardy (Black Cat) returns to New York after years abroad. She exploits Peter's emotions by fabricating a story about having a son, manipulating him into helping her steal Maggia data drives containing evidence of her past crimes. Peter discovers the truth, forcing a confrontation that redefines their relationship.</td>
-                        <td>Black Cat, Maggia Dons, MJ</td>
-                        <td>5</td>
-                        <td>8</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Turf Wars</strong></td>
-                        <td>November 2018</td>
-                        <td>Hammerhead utilizes stolen Sable technology to become a cyborg, launching an organized crime takeover of New York. Captain Yuri Watanabe's police squad is decimated in a brutal attack. Witnessing this massacre triggers Yuri's psychological descent, leading her to abandon her badge and become the vigilante Wraith.</td>
-                        <td>Hammerhead, Yuri Watanabe, Silver Sable, Maggia</td>
-                        <td>5</td>
-                        <td>7</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Silver Lining</strong></td>
-                        <td>December 2018</td>
-                        <td>Silver Sable returns to reclaim her technology stolen by Hammerhead. Peter and Sable form an uneasy alliance to stop the cyborg threat. The arc concludes with Sable's redemption, her decision to leave New York, and Miles Morales beginning his training under Peter's mentorship—setting up the next saga.</td>
-                        <td>Silver Sable, Hammerhead, MJ, Miles Morales (cameo)</td>
-                        <td>5</td>
-                        <td>6</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-
-        <!-- Hardware Unlocks -->
-        <h3 style="margin-top: 60px;">Hardware Unlocks & Suit Progression</h3>
-        <div class="grid-cards" style="margin-top: 30px;">
-            <div class="char-card">
-                <h4>Spider-UK</h4>
-                <p style="font-size: 0.85rem; color: #aaa;">Alternate-universe Spider-Man from Earth-833. British accent, steel ring armor accents. Unlocked: Complete all Heist challenges. Mechanics: Enhanced blocking, shield counter-attack.</p>
-            </div>
-            <div class="char-card">
-                <h4>Spider-Verse Suit</h4>
-                <p style="font-size: 0.85rem; color: #aaa;">Miles Morales' signature suit from Spider-Man: Into the Spider-Verse. Neon accents and graffiti-inspired design. Unlocked: Complete Turf Wars DLC. Mechanics: Bio-electric damage boost.</p>
-            </div>
-            <div class="char-card">
-                <h4>Noir Suit</h4>
-                <p style="font-size: 0.85rem; color: #aaa;">Classic 1933 noir-inspired monochromatic design with fedora and trench coat. Unlocked: Complete Silver Lining. Mechanics: Stealth focus, black-and-white HUD filter.</p>
-            </div>
-            <div class="char-card">
-                <h4>Advanced Suit Mk. III</h4>
-                <p style="font-size: 0.85rem; color: #aaa;">Otto Octavius' most lethal creation. Red and blue with gold accents. Unlocked: Post-game completion. Mechanics: +20% damage, enhanced web capacity.</p>
-            </div>
-        </div>
-    </section>
-
-    <section id="bios">
-        <span class="tag">Dossier: Personnel</span>
-        <h2>The 1048 Census</h2>
-        <p>A 12-subject personnel dossier including protagonist heroes, antagonists, allies, and civilians whose arcs define the saga. Each entry includes voice actor, role classification, character summary, and narrative importance.</p>
-        
-        <div class="grid-cards">
-            <!-- HEROES -->
-            <div class="char-card">
-                <span class="actor-name">Voice: Yuri Lowenthal</span>
-                <h4>Peter Parker / Spider-Man</h4>
-                <p class="bio" style="font-size: 0.8rem;">The veteran hero. 23-year-old lab assistant turned crime-fighter. Carries the weight of Aunt May's death and his responsibility to the city. Battles guilt, sacrifice, and the corrupting influence of the Symbiote suit. His arc spans from hero to antihero, culminating in his transformation into Venom before redemption.</p>
-                <span style="font-size: 0.7rem; color: #555;">ROLE: Primary Protagonist | STATUS: Active | ALIASES: Friendly Neighborhood Spider-Man</span>
-            </div>
-
-            <div class="char-card">
-                <span class="actor-name">Voice: Nadji Jeter</span>
-                <h4>Miles Morales / Spider-Man</h4>
-                <p class="bio" style="font-size: 0.8rem;">The evolved hero. 16-year-old from Brooklyn with bio-electric powers. Trained by Peter Parker, he must protect Harlem from Roxxon Energy while navigating his identity as a bi-racial teenager in a city on fire. His journey is one of self-discovery, determination, and finding his own legacy.</p>
-                <span style="font-size: 0.7rem; color: #555;">ROLE: Secondary Protagonist | STATUS: Ascending | ALIASES: Venom Strike, Electric Conduit</span>
-            </div>
-
-            <!-- ANTAGONISTS -->
-            <div class="char-card">
-                <span class="actor-name">Voice: Tony Todd</span>
-                <h4>Venom / Harry Osborn</h4>
-                <p class="bio" style="font-size: 0.8rem;">A living, breathing nightmare born from the marriage of the Symbiote and Harry Osborn's dying body. The entity seeks to "heal the world" through violent conquest. Powerful, chaotic, intelligent—and utterly consumed by alien ambition and human rage. Spider-Man 2's primary threat.</p>
-                <span style="font-size: 0.7rem; color: #555;">ROLE: Antagonist | THREAT LEVEL: Extinction | STATUS: Contained</span>
-            </div>
-
-            <div class="char-card">
-                <span class="actor-name">Voice: Jim Pirri</span>
-                <h4>Kraven the Hunter</h4>
-                <p class="bio" style="font-size: 0.8rem;">Sergei Kravinoff. A man dying of cancer who views New York City as his final hunt. Leads an army of enhanced hunters in pursuit of Spider-Man, treating the city as a safari. His obsession stems from respect and a desire for one final, worthy opponent before death claims him.</p>
-                <span style="font-size: 0.7rem; color: #555;">ROLE: Primary Antagonist (SM2) | THREAT LEVEL: Extreme | STATUS: Defeated</span>
-            </div>
-
-            <!-- ALLIES & SUPPORT -->
-            <div class="char-card">
-                <span class="actor-name">Voice: Laura Bailey</span>
-                <h4>MJ Watson</h4>
-                <p class="bio" style="font-size: 0.8rem;">Daily Bugle reporter and Peter's confidante. A strategist who investigates crime syndicates while helping Peter dismantle enemy bases. Her investigative skills and emotional intelligence make her essential to the narrative, though her lack of powers forces her into ethical dilemmas.</p>
-                <span style="font-size: 0.7rem; color: #555;">ROLE: Ally / Investigator | STATUS: Active | AFFILIATION: Daily Bugle</span>
-            </div>
-
-            <div class="char-card">
-                <span class="actor-name">Voice: Erica Lindbeck</span>
-                <h4>Felicia Hardy / Black Cat</h4>
-                <p class="bio" style="font-size: 0.8rem;">Professional thief with a complicated history with Peter. Her white hair and luck-based powers make her a formidable force. She lies, manipulates, and steals—but beneath the deception lies genuine affection for Peter. Her DLC chapter explores the fine line between hero and criminal.</p>
-                <span style="font-size: 0.7rem; color: #555;">ROLE: Morally Gray | STATUS: Ambiguous | AFFILIATION: Independent</span>
-            </div>
-
-            <div class="char-card">
-                <span class="actor-name">Voice: Tara Platt</span>
-                <h4>Yuri Watanabe / Wraith</h4>
-                <p class="bio" style="font-size: 0.8rem;">Former Police Captain. Trauma from losing her squad to Hammerhead's cyborg forces drives her transformation into the vigilante Wraith. She operates outside the law using extreme methods, creating moral friction with Spider-Man. Her descent into violence is one of the saga's most compelling character arcs.</p>
-                <span style="font-size: 0.7rem; color: #555;">ROLE: Anti-Hero | STATUS: Uncontrollable | AFFILIATION: NYPD (estranged)</span>
-            </div>
-
-            <div class="char-card">
-                <span class="actor-name">Voice: Graham Phillips</span>
-                <h4>Harry Osborn</h4>
-                <p class="bio" style="font-size: 0.8rem;">Peter's best friend since high school. Secretly kept in a stasis tank by Norman Osborn due to a genetic disease. When released, Harry is desperate to survive, leading him to seek a cure at any cost. His bond with Peter drives central plot threads, and his infection by the Symbiote sets up Spider-Man 2's climax.</p>
-                <span style="font-size: 0.7rem; color: #555;">ROLE: Personal Catalyst | STATUS: Transformed | AFFILIATION: Osborn Industries</span>
-            </div>
-
-            <div class="char-card">
-                <span class="actor-name">Voice: Stephen Oyoung</span>
-                <h4>Martin Li / Mister Negative</h4>
-                <p class="bio" style="font-size: 0.8rem;">A man of duality. Once driven by revenge against the Oscorp corporation, Martin Li was manipulated into becoming the supervillain Mister Negative. His redemption arc in Spider-Man 2 shows a complex antagonist seeking penance, using his powers for good—though Spider-Man initially refuses to trust him.</p>
-                <span style="font-size: 0.7rem; color: #555;">ROLE: Reformed Villain | STATUS: Redemption Path | THREAT LEVEL: Low</span>
-            </div>
-
-            <!-- CIVILIANS & SUPPORTING CAST -->
-            <div class="char-card">
-                <span class="actor-name">Voice: Griffin Puatu</span>
-                <h4>Ganke Lee</h4>
-                <p class="bio" style="font-size: 0.8rem;">Miles' best friend and tech genius. Designed the Spider-Man App that helps Miles navigate his double life. His humor balances darker moments, and his loyalty to Miles is unwavering. Represents the tech-savvy millennial generation navigating superhero reality.</p>
-                <span style="font-size: 0.7rem; color: #555;">ROLE: Comic Relief / Tech Support | STATUS: Confidant | AFFILIATION: Miles' Inner Circle</span>
-            </div>
-
-            <div class="char-card">
-                <span class="actor-name">Voice: Jacqueline Pinol</span>
-                <h4>Rio Morales</h4>
-                <p class="bio" style="font-size: 0.8rem;">Miles' mother and City Council member. The emotional anchor of Miles' story. She works tirelessly to improve Harlem, often at odds with corporate interests. Her protective love for Miles and her community activism define her character, making her one of the saga's most grounded presences.</p>
-                <span style="font-size: 0.7rem; color: #555;">ROLE: Maternal Figure | STATUS: Active | AFFILIATION: Harlem Community</span>
-            </div>
-
-            <div class="char-card">
-                <span class="actor-name">Voice: William Salyers</span>
-                <h4>Otto Octavius / Doctor Octopus</h4>
-                <p class="bio" style="font-size: 0.8rem;">The brilliant scientist and mentor. His tragic accident fused his artificial limbs with his nervous system, creating the monster Doc Ock. Imprisoned in the Raft, planning revenge against Spider-Man. Otto's fall from grace—from hero-worship to nihilism—mirrors Peter's potential dark path.</p>
-                <span style="font-size: 0.7rem; color: #555;">ROLE: Tragic Antagonist | STATUS: Imprisoned | THREAT LEVEL: High (Contained)</span>
-            </div>
-        </div>
-    </section>
-
-    <footer>
-        <div class="footer-info">
-            <h2>ARCHIVE COMPLETE</h2>
-            <p>V8.0 — The Brutalist Engine | Neural Canvas Active | All Systems Operational</p>
-        </div>
-        
-        <div class="footer-grid">
-            <div class="footer-item">
-                <h4>SYSTEM STATUS</h4>
-                <p>Database: Comprehensive<br>Records: 200+<br>Sectors: 6<br>Uptime: 100%</p>
-            </div>
-            <div class="footer-item">
-                <h4>COMPATIBILITY</h4>
-                <p>PlayStation 4<br>PlayStation 5<br>Archive: Universal<br>Version: V8.0</p>
-            </div>
-            <div class="footer-item">
-                <h4>CANON STATUS</h4>
-                <p>Earth-1048 (Primary)<br>Timeline: 2018-2023<br>Continuity: Intact<br>Multiverse: Acknowledged</p>
-            </div>
-            <div class="footer-item">
-                <h4>NEURAL INTERFACE</h4>
-                <p>Particle System: Active<br>Glitch Effects: Enabled<br>Audio OS: V8 Command<br>Cursor: Custom</p>
-            </div>
-        </div>
-
-        <p style="margin-top: 80px; font-size: 0.75rem; color: #333;">
-            SPIDER-MAN is © Marvel Studios & Insomniac Games. Archive created for documentation purposes. Hover over headers to trigger glitch effects. All audio powered by YouTube API.
-        </p>
-    </footer>
+        </section>
+    </main>
 
     <script src="https://www.youtube.com/iframe_api"></script>
     <script>
-        // --- NEURAL CANVAS (PARTICLE SYSTEM) ---
-        const canvas = document.getElementById('neural-bg');
-        const ctx = canvas.getContext('2d');
-        
-        function resizeCanvas() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-        }
-        resizeCanvas();
-        window.addEventListener('resize', resizeCanvas);
+        // --- BOOT ---
+        setTimeout(() => {
+            document.getElementById('loader').style.display = 'none';
+            p.playVideo(); upd();
+        }, 2000);
 
-        const particles = [];
-        class Particle {
-            constructor(x, y) {
-                this.x = x;
-                this.y = y;
-                this.vx = (Math.random() - 0.5) * 2;
-                this.vy = (Math.random() - 0.5) * 2;
-                this.life = Math.random() * 100 + 50;
-                this.maxLife = this.life;
-                this.size = Math.random() * 2 + 1;
-            }
-            update() {
-                this.x += this.vx;
-                this.y += this.vy;
-                this.life -= 1;
-                this.vy += 0.1; // gravity
-                if (this.x < 0) this.x = canvas.width;
-                if (this.x > canvas.width) this.x = 0;
-                if (this.y > canvas.height) this.y = 0;
-            }
-            draw() {
-                const opacity = this.life / this.maxLife;
-                ctx.fillStyle = `rgba(226, 27, 34, ${opacity * 0.5})`;
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                ctx.fill();
-            }
-        }
-
-        function addParticles() {
-            for (let i = 0; i < 2; i++) {
-                particles.push(new Particle(
-                    Math.random() * canvas.width,
-                    Math.random() * canvas.height
-                ));
-            }
-        }
-
-        function animateParticles() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            
-            for (let i = particles.length - 1; i >= 0; i--) {
-                particles[i].update();
-                particles[i].draw();
-                if (particles[i].life <= 0) {
-                    particles.splice(i, 1);
-                }
-            }
-            
-            if (particles.length < 100) addParticles();
-            requestAnimationFrame(animateParticles);
-        }
-        animateParticles();
-
-        // --- BOOT SYSTEM ---
-        const logs = [
-            "> INITIALIZING KERNEL v8.0...",
-            "> LOADING NYC_GRID_V3 (220 km²)...",
-            "> MOUNTING DLC_ASSETS (3-CHAPTER MATRIX)...",
-            "> LINKING NEURAL_INTERFACE...",
-            "> ACTIVATING PARTICLE SYSTEM...",
-            "> AUTHENTICATING PETER_PARKER...",
-            "> AUTHENTICATING MILES_MORALES...",
-            "> LOADING PERSONNEL DOSSIER (12-SUBJECT)...",
-            "> INITIATING GLITCH_TEXT PROTOCOL...",
-            "> SYSTEM READY FOR NEURAL SYNC."
-        ];
-        let termIdx = 0;
-        const term = document.getElementById('term');
-        const bootIn = setInterval(() => {
-            const p = document.createElement('div');
-            p.className = 'term-log';
-            p.innerText = logs[termIdx];
-            term.appendChild(p);
-            termIdx++;
-            if(termIdx >= logs.length) {
-                clearInterval(bootIn);
-                document.getElementById('start-btn').style.display = 'block';
-            }
-        }, 200);
-
-        function initialize() {
-            document.getElementById('boot-wrap').style.display = 'none';
-            player.playVideo();
-            updateMusicUI();
-        }
-
-        // --- AUDIO ENGINE (V8 COMMAND CENTER) ---
-        let player;
-        let track = 0;
-        const playlist = [
-            { id: '-kt1yB3Lk9g', n: 'SM2 Main Theme | Composer: John Paesano' },
-            { id: 'ApXoWvfEYVU', n: 'Sunflower (Acoustic) | Post Malone & Swae Lee' },
-            { id: '5IaHyW-z27U', n: 'Home (Mashup) | Miles Morales Tribute' },
-            { id: 'AhiA2tXQ7pk', n: 'I\'m Ready | Venom Theme (Remastered)' }
-        ];
-
-        function onYouTubeIframeAPIReady() {
-            player = new YT.Player('player-api', {
-                height: '0', width: '0', videoId: playlist[0].id,
-                events: { 'onStateChange': (e) => { if(e.data == 0) skipAudio(); } }
-            });
-        }
-
-        function toggleAudio() {
-            const s = player.getPlayerState();
-            s == 1 ? player.pauseVideo() : player.playVideo();
-        }
-
-        function skipAudio() {
-            track = (track + 1) % playlist.length;
-            player.loadVideoById(playlist[track].id);
-            updateMusicUI();
-        }
-
-        function updateMusicUI() {
-            document.getElementById('current-track').innerText = '♪ ' + playlist[track].n;
-        }
-
-        // --- MOUSE ENGINE ---
-        const c = document.getElementById('cursor');
-        const r = document.getElementById('cursor-ring');
+        // --- MOUSE & WEB ENGINE ---
+        const c = document.getElementById('c'), cr = document.getElementById('cr');
+        const webLine = document.getElementById('web-line');
         window.onmousemove = (e) => {
-            c.style.left = e.clientX + 'px';
-            c.style.top = e.clientY + 'px';
-            r.style.left = (e.clientX - 15) + 'px';
-            r.style.top = (e.clientY - 15) + 'px';
+            c.style.left = e.clientX + 'px'; c.style.top = e.clientY + 'px';
+            cr.style.left = e.clientX - 25 + 'px'; cr.style.top = e.clientY - 25 + 'px';
+            
+            // Webbing effect
+            webLine.setAttribute('x1', e.clientX);
+            webLine.setAttribute('y1', e.clientY);
+            webLine.setAttribute('x2', window.innerWidth / 2);
+            webLine.setAttribute('y2', window.innerHeight / 2);
         };
 
-        // --- SMOOTH SCROLL TO SECTION ---
-        document.querySelectorAll('nav a, .tag').forEach(el => {
-            el.addEventListener('click', (e) => {
-                const target = document.querySelector(el.getAttribute('href') || '#hero');
-                if(target) target.scrollIntoView({ behavior: 'smooth' });
-            });
-        });
+        // --- AUDIO ---
+        let p, t=0;
+        const tracks = [
+            {id:'-kt1yB3Lk9g', n:'SM2_MAIN'}, {id:'ApXoWvfEYVU', n:'SUNFLOWER'},
+            {id:'5IaHyW-z27U', n:'HOME'}, {id:'AhiA2tXQ7pk', n:'VENOM'}
+        ];
+        function onYouTubeIframeAPIReady() {
+            p = new YT.Player('yt', { height:'0', width:'0', videoId:tracks[0].id, 
+            events:{'onStateChange':(e)=>{if(e.data==0)skip();}} });
+        }
+        function play() { p.getPlayerState()==1 ? p.pauseVideo() : p.playVideo(); }
+        function skip() { t=(t+1)%tracks.length; p.loadVideoById(tracks[t].id); upd(); }
+        function upd() { document.getElementById('tn').innerText = '>> ' + tracks[t].n; }
+
+        // --- HORIZONTAL SCROLL ENABLE ---
+        window.addEventListener('wheel', (e) => {
+            if (e.deltaY !== 0) {
+                window.scrollBy(e.deltaY, 0);
+                e.preventDefault();
+            }
+        }, { passive: false });
     </script>
 </body>
 </html>
