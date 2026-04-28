@@ -1923,6 +1923,49 @@ footer {
   opacity: 1;
   transform: translateY(0);
 }
+   .modal {
+  display: none;
+  position: fixed;
+  z-index: 999;
+  inset: 0;
+  background: rgba(0,0,0,0.8);
+  backdrop-filter: blur(6px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-content {
+  position: relative;
+  background: #0b0f1a;
+  padding: 25px;
+  border-radius: 16px;
+  width: 320px;
+  text-align: center;
+  color: white;
+  transform: scale(0.8);
+  opacity: 0;
+  transition: all 0.3s ease;
+}
+
+.modal.show .modal-content {
+  transform: scale(1);
+  opacity: 1;
+}
+
+.modal img {
+  width: 100%;
+  border-radius: 10px;
+  margin-bottom: 15px;
+}
+
+.close-btn {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  font-size: 24px;
+  cursor: pointer;
+}
 </style>
 </head>
 <body>
@@ -3267,6 +3310,16 @@ footer {
 <!-- EASTER EGG -->
 <div class="easter-egg" onclick="easterEgg()" title="???">🕸️</div>
 <div class="easter-msg">"With great power comes great responsibility." — Uncle Ben</div>
+   <div id="suitModal" class="modal">
+  <div class="modal-content">
+    <span class="close-btn">&times;</span>
+
+    <img id="modalImg" src="" alt="Suit Image">
+    <h2 id="modalTitle"></h2>
+    <p id="modalDesc"></p>
+    <p id="modalPower"></p>
+  </div>
+</div>
 
 <script>
 /* ============================================================
@@ -3717,6 +3770,40 @@ document.addEventListener('DOMContentLoaded', () => {
   buildCharDB();
   buildTimeline();
 });
+   const modal = document.getElementById("suitModal");
+const modalImg = document.getElementById("modalImg");
+const modalTitle = document.getElementById("modalTitle");
+const modalDesc = document.getElementById("modalDesc");
+const modalPower = document.getElementById("modalPower");
+const closeBtn = document.querySelector(".close-btn");
+
+// Click on suit cards
+document.querySelectorAll(".suit-card").forEach(card => {
+  card.addEventListener("click", () => {
+    modal.style.display = "flex";
+
+    modalImg.src = card.dataset.img;
+    modalTitle.textContent = card.dataset.title;
+    modalDesc.textContent = card.dataset.desc;
+    modalPower.textContent = "Power: " + card.dataset.power;
+
+    setTimeout(() => modal.classList.add("show"), 10);
+  });
+});
+
+// Close button
+closeBtn.onclick = () => {
+  modal.classList.remove("show");
+  setTimeout(() => modal.style.display = "none", 200);
+};
+
+// Click outside
+window.onclick = (e) => {
+  if (e.target === modal) {
+    modal.classList.remove("show");
+    setTimeout(() => modal.style.display = "none", 200);
+  }
+};
 </script>
 </body>
 </html>
