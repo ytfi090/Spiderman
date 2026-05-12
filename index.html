@@ -2362,25 +2362,28 @@ footer {
     text-align: center;
     text-transform: uppercase;
   }
- /* FIX: Hero content full width */
+/* Back button — sits above hero, not inside it */
+.back-btn {
+  position: relative;
+  display: inline-flex;
+  margin: 80px 0 0 64px;
+  z-index: 20;
+  padding-left: 0;
+}
+
 .game-page-hero-content {
   width: 100%;
+  max-width: 100%;
 }
 
-/* FIX: Back button positioning */
-.back-btn {
-  position: absolute;
-  top: 80px;
-  left: 0;
-  margin: 0;
-  z-index: 20;
-  padding-left: 64px;
-}
+@media (max-width: 768px) {
+  .back-btn {
+    margin: 80px 0 0 24px;
+  }
+  .game-page-hero-content {
+    padding: 0 24px;
+  }
 
-/* Make game page hero the positioning context */
-.game-page-hero {
-  position: relative;
-}
   
    
 </style>
